@@ -88,5 +88,9 @@ public interface DBConnection {
 	 * @return boolean
 	 */
 	public boolean verifyLogin(String userId, String password);
+
+	public boolean registerUser(String userId, String password, String firstname, String lastname);
+
+	public void insertTemplate(String templateName);
 }
 

@@ -1,6 +1,7 @@
 
 package db.mysql;
 
+
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.Connection;
@@ -29,14 +30,16 @@ public class MySQLTableCreation {
 			sql = "DROP TABLE IF EXISTS Relationships";
 			statement.executeUpdate(sql);
 			
-			sql = "DROP TABLE IF EXISTS Songs";
+			sql = "DROP TABLE IF EXISTS Templates";
+			statement.executeUpdate(sql);
+			
+			sql = "DROP TABLE IF EXISTS Memes";
 			statement.executeUpdate(sql);
 			
 			sql = "DROP TABLE IF EXISTS Users";
 			statement.executeUpdate(sql);	
 
-			
-
+		
 			
 			sql = "CREATE TABLE Users ("
 					+ "id INT NOT NULL AUTO_INCREMENT,"
@@ -47,12 +50,6 @@ public class MySQLTableCreation {
 					+ ")";
 			statement.executeUpdate(sql);
 			
-			sql = "CREATE TABLE Songs ("
-					+ "id INT NOT NULL AUTO_INCREMENT,"
-					+ "spotify_url VARCHAR(255) NOT NULL,"
-					+ "PRIMARY KEY (id)"
-					+ ")";
-			statement.executeUpdate(sql);
 			
 			sql = "CREATE TABLE Relationships ("
 					+  "id INT NOT NULL AUTO_INCREMENT,"
@@ -65,26 +62,35 @@ public class MySQLTableCreation {
 				    + ")";
 			statement.executeUpdate(sql);
 			
-			sql = "CREATE TABLE Posts ("
+			sql = "CREATE TABLE Templates ("
+					+ "id INT NOT NULL AUTO_INCREMENT,"
+					+ "caption VARCHAR(255) NOT NULL,"
+					+  "name VARCHAR(255) NOT NULL,"
+         			+ "image_url VARCHAR(512) NOT NULL,"
+					+ "CreatedDateTime DATETIME NOT NULL,"
+					+ "PRIMARY KEY (id)"
+					+ ")";
+			statement.executeUpdate(sql);
+			
+			sql = "CREATE TABLE Memes ("
 					+ "id INT NOT NULL AUTO_INCREMENT,"
 					+ "user_id INT NOT NULL,"
-					+ "content VARCHAR(255) NOT NULL,"
-         			+ "song_id INT NOT NULL,"
+					+ "caption VARCHAR(255) NOT NULL,"
+         			+ "image_url VARCHAR(512) NOT NULL,"
 					+ "CreatedDateTime DATETIME NOT NULL,"
 					+ "PRIMARY KEY (id),"
-					+ "FOREIGN KEY (user_id) REFERENCES Users(id),"
-					+ "FOREIGN KEY (song_id) REFERENCES Songs(id)"
+					+ "FOREIGN KEY (user_id) REFERENCES Users(id)"
 					+ ")";
 			statement.executeUpdate(sql);
 			
 			sql = "CREATE TABLE Feeds ("
 					+ "id INT NOT NULL AUTO_INCREMENT,"
 					+ "subscriber_id INT NOT NULL,"
-					+ "post_id INT NOT NULL,"
+					+ "meme_id INT NOT NULL,"
 					+ "CreatedDateTime DATETIME NOT NULL,"
 					+ "PRIMARY KEY (id),"
 					+ "FOREIGN KEY (subscriber_id) REFERENCES Users(id),"
-					+ "FOREIGN KEY (post_id) REFERENCES Posts(id)"
+					+ "FOREIGN KEY (meme_id) REFERENCES Memes(id)"
 					+ ")";
 			statement.executeUpdate(sql);
 						
