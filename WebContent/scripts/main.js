@@ -530,12 +530,17 @@
    <i class="fa fa-heart"></i>
    </div>
    </li>
+     <div id="columns">
+  <figure>
+  <img src="//storage.googleapis.com/meme_generator/test.png">
+	<figcaption>Computer Science memes</figcaption>
+	</figure>
    */
   function addItem(itemList, item) {
     var item_id = item.item_id;
 
-    // create the <li> tag and specify the id and class attributes
-    var li = $create('li', {
+    // create the <figure> tag and specify the id and class attributes
+    var figure = $create('figure', {
       id: 'item-' + item_id,
       className: 'item'
     });

@@ -61,6 +61,28 @@ public class MySQLConnection implements DBConnection {
 	}
 
 	@Override
+	public String searchTemplate(String templateName) {
+        if (conn == null) {
+            System.err.println("DB connection failed");
+        }
+        
+		try {
+			String sql = "SELECT image_url FROM Templates WHERE name = ? ";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, templateName);
+			ResultSet rs= ps.executeQuery();
+			String image_url = "" ;
+			while(rs.next()) {
+				image_url = rs.getString("image_url");
+			}
+			return image_url;
+			
+	   }catch(Exception e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+	@Override
 	public void setFavoriteItems(String userId, List<String> itemIds) {
 		// TODO Auto-generated method stub
         if (conn == null) {

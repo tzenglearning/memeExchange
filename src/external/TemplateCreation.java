@@ -103,16 +103,16 @@ public class TemplateCreation {
 				
 				//insert into sql
 				
-				sqlConn.insertTemplate(objectName);
-				System.out.println(objectName + " inserted into sql");
+//				sqlConn.insertTemplate(objectName);
+//				System.out.println(objectName + " inserted into sql");
 				
 //			    //save to gcp
-//				Storage storage = StorageOptions.newBuilder().setProjectId(GCPUtil.projectId).build().getService();
-//			    BlobId blobId = BlobId.of(GCPUtil.bucketName, objectName);
-//			    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-//			    Blob blob = storage.create(blobInfo, image);
-//			    
-//			    System.out.println(objectName + " uploaded to gcp");
+				Storage storage = StorageOptions.newBuilder().setProjectId(GCPUtil.projectId).build().getService();
+			    BlobId blobId = BlobId.of(GCPUtil.bucketName, objectName+".png");
+			    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+			    Blob blob = storage.create(blobInfo, image);
+			    
+			    System.out.println(objectName + " uploaded to gcp");
 				
 	        }
 
