@@ -133,7 +133,7 @@ public class MySQLConnection implements DBConnection {
 		}
 	
 		try {
-			String sql="SELECT * FROM users WHERE user_id = ? AND password = ? ";
+			String sql="SELECT * FROM Users WHERE user_id = ? AND password = ? ";
 			PreparedStatement statement=conn.prepareStatement(sql);
 			statement.setString(1, userId);
 			statement.setString(2, password);
@@ -145,7 +145,6 @@ public class MySQLConnection implements DBConnection {
 			e.printStackTrace();
 		}
 
-	
 		return false;
 	}
 	@Override
@@ -156,7 +155,7 @@ public class MySQLConnection implements DBConnection {
 		}
 
 		try {
-			String sql = "INSERT IGNORE INTO users VALUES (?, ?, ?, ?)";
+			String sql = "INSERT IGNORE INTO Users VALUES (?, ?, ?, ?)";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, userId);
 			ps.setString(2, password);
@@ -185,7 +184,23 @@ public class MySQLConnection implements DBConnection {
 	@Override
 	public String getFullname(String userId) {
 		// TODO Auto-generated method stub
-		return null;
+		if (conn == null) {
+			return "";
+		}		
+		String name = "";
+		try {
+			String sql = "SELECT first_name, last_name FROM Users WHERE user_id = ? ";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, userId);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				name = rs.getString("first_name") + " " + rs.getString("last_name");
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return name;
+
 	}
 
 

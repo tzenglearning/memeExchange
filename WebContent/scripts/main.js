@@ -15,10 +15,14 @@
     // register event listeners
     
     document.querySelector('#create-btn').addEventListener('click', loadTemplates);
+    document.querySelector('#login-form-btn').addEventListener('click', onSessionInvalid);
+    document.querySelector('#login-btn').addEventListener('click', login);
+    document.querySelector('#register-form-btn').addEventListener('click', showRegisterForm);
+    document.querySelector('#register-btn').addEventListener('click', register);
    // document.querySelector('#fav-btn').addEventListener('click', loadFavoriteItems);
    // document.querySelector('#recommend-btn').addEventListener('click', loadRecommendedItems);
-    //validateSession();
-    onSessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
+    validateSession();
+     //onSessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
     //onSessionInvalid();
   }
 
@@ -32,7 +36,7 @@
     var req = JSON.stringify({});
 
     // display loading message
-    showLoadingMessage('Validating session...');
+    //showLoadingMessage('Validating session...');
 
     // make AJAX call
     ajax('GET', url, req,
@@ -69,7 +73,6 @@
 
   function onSessionInvalid() {
     var loginForm = document.querySelector('#login-form');
-    console.log("hi");
     var registerForm = document.querySelector('#register-form');
     var memes = document.querySelector('#memes');
     var avatar = document.querySelector('#avatar');
@@ -98,14 +101,12 @@
   function showRegisterForm() {
     var loginForm = document.querySelector('#login-form');
     var registerForm = document.querySelector('#register-form');
-    var itemNav = document.querySelector('#item-nav');
-    var itemList = document.querySelector('#item-list');
+    var memes = document.querySelector('#memes');
     var avatar = document.querySelector('#avatar');
     var welcomeMsg = document.querySelector('#welcome-msg');
     var logoutBtn = document.querySelector('#logout-link');
 
-    hideElement(itemNav);
-    hideElement(itemList);
+    hideElement(memes);
     hideElement(avatar);
     hideElement(logoutBtn);
     hideElement(welcomeMsg);
@@ -115,50 +116,6 @@
     showElement(registerForm);
   }  
   
-
-  function initGeoLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        onPositionUpdated,
-        onLoadPositionFailed, {
-          maximumAge: 60000
-        });
-      showLoadingMessage('Retrieving your location...');
-    } else {
-      onLoadPositionFailed();
-    }
-  }
-
-  function onPositionUpdated(position) {
-    lat = position.coords.latitude;
-    lng = position.coords.longitude;
-
-    loadNearbyItems();
-  }
-
-  function onLoadPositionFailed() {
-    console.warn('navigator.geolocation is not available');
-    getLocationFromIP();
-  }
-
-  function getLocationFromIP() {
-    // get location from http://ipinfo.io/json
-    var url = 'http://ipinfo.io/json'
-    var data = null;
-
-    ajax('GET', url, data, function(res) {
-      var result = JSON.parse(res);
-      if ('loc' in result) {
-        var loc = result.loc.split(',');
-        lat = loc[0];
-        lng = loc[1];
-      } else {
-        console.warn('Getting location by IP failed.');
-      }
-      loadNearbyItems();
-    });
-  }
-
   // -----------------------------------
   // Login
   // -----------------------------------
