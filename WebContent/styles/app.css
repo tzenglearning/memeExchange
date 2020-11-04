@@ -111,6 +111,7 @@ ul {
 	overflow: auto;
 	padding: 40px;
 	width: 300px;
+  
 }
 
 #login-form label {
@@ -121,18 +122,67 @@ ul {
 	border: none;
 	display: block;
 	margin-bottom: 10px;
-	padding: 8px;
+	padding: 10px;
 	width: 100%;
 }
 
-#login-form button {
+#login-error {
+	clear: both;
+	color: #990000;
+	padding-top: 10px;
+}
+#login-form #register-form-btn {
+	cursor: pointer;
+	float: left;
+	padding: 8px 10px;
+	text-align: left;
+}
+
+#login-form #login-btn {
 	cursor: pointer;
 	float: right;
 	padding: 8px 20px;
 	text-align: right;
 }
 
-#login-error {
+/**
+ * register form
+ */
+#register-form {
+	color: #624630;
+	margin: 0px auto;
+	overflow: auto;
+	padding: 40px;
+	width: 350px;
+}
+
+#register-form label {
+	display: block;
+}
+
+#register-form input {
+	border: none;
+	display: block;
+	margin-bottom: 10px;
+	padding: 8px;
+	width: 100%;
+}
+
+#register-form #login-form-btn {
+	cursor: pointer;
+	float: left;
+	padding: 8px 10px;
+	text-align: left;
+}
+
+#register-form #register-btn {
+	cursor: pointer;
+	float: right;
+	padding: 8px 20px;
+	text-align: right;
+}
+
+#register-result {
 	clear: both;
 	color: #990000;
 	padding-top: 10px;
@@ -267,6 +317,10 @@ ul {
 	width: 60px;
 }
 
+.fav:hover {
+	color: #F13F3F;
+}
+
 .fav-link:hover {
 	color: #F13F3F;
 }
@@ -308,7 +362,7 @@ body {
   font-family: Calluna, Arial, sans-serif;
   min-height: 1000px;
 }
-#columns {
+#memes {
 	column-width: 320px;
 	column-gap: 15px;
   width: 90%;
@@ -316,7 +370,7 @@ body {
 	margin: 50px auto;
 }
 
-div#columns figure {
+div#memes figure {
 	background: #fefefe;
 	border: 2px solid #fcfcfc;
 	box-shadow: 0 1px 2px rgba(34, 25, 25, 0.4);
@@ -328,37 +382,41 @@ div#columns figure {
   column-break-inside: avoid;
 }
 
-div#columns figure img {
+div#memes figure img {
 	width: 100%; height: auto;
 	border-bottom: 1px solid #ccc;
 	padding-bottom: 15px;
 	margin-bottom: 5px;
 }
 
-div#columns figure figcaption {
+div#memes figure figcaption {
   font-size: .9rem;
 	color: #444;
   line-height: 1.5;
 }
 
-div#columns small { 
+div#memes i.fa.fa-heart{
+  float: right
+}
+
+div#memes small { 
   font-size: 1rem;
   float: right; 
   text-transform: uppercase;
   color: #aaa;
 } 
 
-div#columns small a { 
+div#memes small a { 
   color: #666; 
   text-decoration: none; 
   transition: .4s color;
 }
 
-div#columns:hover figure:not(:hover) {
+div#memes:hover figure:not(:hover) {
 	opacity: 0.4;
 }
 
 @media screen and (max-width: 750px) { 
-  #columns { column-gap: 0px; }
-  #columns figure { width: 100%; }
+  #memes { column-gap: 0px; }
+  #memes figure { width: 100%; }
 }

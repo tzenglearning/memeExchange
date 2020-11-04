@@ -13,15 +13,13 @@
    */
   function init() {
     // register event listeners
-    document.querySelector('#login-form-btn').addEventListener('click', onSessionInvalid);
-    document.querySelector('#login-btn').addEventListener('click', login);
-    document.querySelector('#register-form-btn').addEventListener('click', showRegisterForm);
-    document.querySelector('#register-btn').addEventListener('click', register);
-    document.querySelector('#nearby-btn').addEventListener('click', loadNearbyItems);
-    document.querySelector('#fav-btn').addEventListener('click', loadFavoriteItems);
-    document.querySelector('#recommend-btn').addEventListener('click', loadRecommendedItems);
-    validateSession();
-    // onSessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
+    
+    document.querySelector('#create-btn').addEventListener('click', loadTemplates);
+   // document.querySelector('#fav-btn').addEventListener('click', loadFavoriteItems);
+   // document.querySelector('#recommend-btn').addEventListener('click', loadRecommendedItems);
+    //validateSession();
+    onSessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
+    //onSessionInvalid();
   }
 
   /**
@@ -54,36 +52,31 @@
 
     var loginForm = document.querySelector('#login-form');
     var registerForm = document.querySelector('#register-form');
-    var itemNav = document.querySelector('#item-nav');
-    var itemList = document.querySelector('#item-list');
+    var memes = document.querySelector('#memes');
     var avatar = document.querySelector('#avatar');
     var welcomeMsg = document.querySelector('#welcome-msg');
     var logoutBtn = document.querySelector('#logout-link');
 
     welcomeMsg.innerHTML = 'Welcome, ' + user_fullname;
 
-    showElement(itemNav);
-    showElement(itemList);
+    showElement(memes);
     showElement(avatar);
     showElement(welcomeMsg);
     showElement(logoutBtn, 'inline-block');
     hideElement(loginForm);
     hideElement(registerForm);
-
-    initGeoLocation();
   }
 
   function onSessionInvalid() {
     var loginForm = document.querySelector('#login-form');
+    console.log("hi");
     var registerForm = document.querySelector('#register-form');
-    var itemNav = document.querySelector('#item-nav');
-    var itemList = document.querySelector('#item-list');
+    var memes = document.querySelector('#memes');
     var avatar = document.querySelector('#avatar');
     var welcomeMsg = document.querySelector('#welcome-msg');
     var logoutBtn = document.querySelector('#logout-link');
 
-    hideElement(itemNav);
-    hideElement(itemList);
+    hideElement(memes);
     hideElement(avatar);
     hideElement(logoutBtn);
     hideElement(welcomeMsg);
@@ -291,8 +284,8 @@
   }
 
   function showLoadingMessage(msg) {
-    var itemList = document.querySelector('#item-list');
-    itemList.innerHTML = '<p class="notice"><i class="fa fa-spinner fa-spin"></i> ' +
+    var memes = document.querySelector('#memes');
+    memes.innerHTML = '<p class="notice"><i class="fa fa-spinner fa-spin"></i> ' +
       msg + '</p>';
   }
 
@@ -370,31 +363,32 @@
    */
   function loadTemplates() {
     console.log('loadTemplates');
-    activeBtn('create-btn');
+    //ctiveBtn('create-btn');
 
-    // The request parameters
-    var url = './templates';
-    var data = null;
+    // // The request parameters
+    // var url = './templates?page=1&var=2';
+    // var data = null;
 
     // display loading message
-    showLoadingMessage('Loading ...');
+   // showLoadingMessage('Loading ...');
 
     // make AJAX call
-    ajax('GET', url,
-      // successful callback
-      function(res) {
-        var items = JSON.parse(res);
-        if (!items || items.length === 0) {
-          showWarningMessage('No templates.');
-        } else {
-          listItems(items);
-        }
-      },
-      // failed callback
-      function() {
-        showErrorMessage('Cannot load templates.');
-      }
-    );
+    // ajax('GET', url,
+    //   // successful callback
+    //   function(res) {
+    //     var items =["storage.googleapis.com/meme_generator/drake"] //JSON.parse(res);
+    //     if (!items || items.length === 0) {
+    //       showWarningMessage('No templates.');
+    //     } else {
+    //       listItems(items);
+    //     }
+    //   },
+    //   // failed callback
+    //   function() {
+    //     showErrorMessage('Cannot load templates.');
+    //   }
+    // );
+    listItems(["//storage.googleapis.com/meme_generator/aag.png"])
   }
 
   /**
@@ -500,12 +494,13 @@
    * @param items - An array of item JSON objects
    */
   function listItems(items) {
-    var itemList = document.querySelector('#item-list');
-    itemList.innerHTML = ''; // clear current results
-
-    for (var i = 0; i < items.length; i++) {
-      addItem(itemList, items[i]);
-    }
+    var images = document.querySelector('#memes');
+    images.innerHTML = '';
+    //to be developed
+    //images.innerHTML = $create('div'); // clear current results
+    //for (var i = 0; i < items.length; i++) {
+       //addItem(images, items[i]);
+    //}
   }
 
   /**
@@ -514,115 +509,29 @@
    * @param itemList - The <ul id="item-list"> tag (DOM container)
    * @param item - The item data (JSON object)
    *
-   <li class="item">
-   <img alt="item image" src="https://s3-media3.fl.yelpcdn.com/bphoto/EmBj4qlyQaGd9Q4oXEhEeQ/ms.jpg" />
-   <div>
-   <a class="item-name" href="#" target="_blank">Item</a>
-   <p class="item-category">Vegetarian</p>
-   <div class="stars">
-   <i class="fa fa-star"></i>
-   <i class="fa fa-star"></i>
-   <i class="fa fa-star"></i>
-   </div>
-   </div>
-   <p class="item-address">699 Calderon Ave<br/>Mountain View<br/> CA</p>
-   <div class="fav-link">
-   <i class="fa fa-heart"></i>
-   </div>
-   </li>
-     <div id="columns">
-  <figure>
-  <img src="//storage.googleapis.com/meme_generator/test.png">
-	<figcaption>Computer Science memes</figcaption>
+  <div id="columns">
+    <figure>
+       <img src="//storage.googleapis.com/meme_generator/test.png">
+	    <figcaption>Computer Science memes</figcaption>
 	</figure>
    */
   function addItem(itemList, item) {
-    var item_id = item.item_id;
-
     // create the <figure> tag and specify the id and class attributes
-    var figure = $create('figure', {
-      id: 'item-' + item_id,
-      className: 'item'
-    });
-
-    // set the data attribute ex. <li data-item_id="G5vYZ4kxGQVCR" data-favorite="true">
-    li.dataset.item_id = item_id;
-    li.dataset.favorite = item.favorite;
+    var figure = $create('figure');
 
     // item image
-    if (item.image_url) {
-      li.appendChild($create('img', { src: item.image_url }));
+    if (item) {
+      figure.appendChild($create('img', {src: item}));
     } else {
-      li.appendChild($create('img', {
+      figure.appendChild($create('img', {
         src: 'https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png'
       }));
     }
-    // section
-    var section = $create('div');
+   
+    //figure
+    figure.appendChild($create('figcaption'));
 
-    // title
-    var title = $create('a', {
-      className: 'item-name',
-      href: item.url,
-      target: '_blank'
-    });
-    title.innerHTML = item.name;
-    section.appendChild(title);
-
-    // category
-    var category = $create('p', {
-      className: 'item-category'
-    });
-    category.innerHTML = 'Category: ' + item.categories.join(', ');
-    section.appendChild(category);
-
-    // stars
-    var stars = $create('div', {
-      className: 'stars'
-    });
-
-    for (var i = 0; i < item.rating; i++) {
-      var star = $create('i', {
-        className: 'fa fa-star'
-      });
-      stars.appendChild(star);
-    }
-
-    if (('' + item.rating).match(/\.5$/)) {
-      stars.appendChild($create('i', {
-        className: 'fa fa-star-half-o'
-      }));
-    }
-
-    section.appendChild(stars);
-
-    li.appendChild(section);
-
-    // address
-    var address = $create('p', {
-      className: 'item-address'
-    });
-
-    // ',' => '<br/>',  '\"' => ''
-    address.innerHTML = item.address.replace(/,/g, '<br/>').replace(/\"/g, '');
-    li.appendChild(address);
-
-    // favorite link
-    var favLink = $create('p', {
-      className: 'fav-link'
-    });
-
-    favLink.onclick = function() {
-      changeFavoriteItem(item_id);
-    };
-
-    favLink.appendChild($create('i', {
-      id: 'fav-icon-' + item_id,
-      className: item.favorite ? 'fa fa-heart' : 'fa fa-heart-o'
-    }));
-
-    li.appendChild(favLink);
-    itemList.appendChild(li);
+    itemList.appendChild(figure);
   }
 
   init();
