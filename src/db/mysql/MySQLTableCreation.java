@@ -29,11 +29,11 @@ public class MySQLTableCreation {
 			
 			sql = "DROP TABLE IF EXISTS Relationships";
 			statement.executeUpdate(sql);
-			
-			sql = "DROP TABLE IF EXISTS Templates";
+						
+			sql = "DROP TABLE IF EXISTS Memes";
 			statement.executeUpdate(sql);
 			
-			sql = "DROP TABLE IF EXISTS Memes";
+			sql = "DROP TABLE IF EXISTS Templates";
 			statement.executeUpdate(sql);
 			
 			sql = "DROP TABLE IF EXISTS Users";
@@ -63,23 +63,25 @@ public class MySQLTableCreation {
 			statement.executeUpdate(sql);
 			
 			sql = "CREATE TABLE Templates ("
-					+ "id INT NOT NULL AUTO_INCREMENT,"
+					+ "template_id VARCHAR(255) NOT NULL,"
 					+ "caption VARCHAR(255) NOT NULL,"
-					+  "name VARCHAR(255) NOT NULL,"
          			+ "image_url VARCHAR(512) NOT NULL,"
 					+ "CreatedDateTime DATETIME NOT NULL,"
-					+ "PRIMARY KEY (id)"
+					+ "PRIMARY KEY (template_id)"
 					+ ")";
 			statement.executeUpdate(sql);
 			
 			sql = "CREATE TABLE Memes ("
 					+ "id INT NOT NULL AUTO_INCREMENT,"
 					+ "user_id VARCHAR(255) NOT NULL,"
+					+ "template_id VARCHAR(255) NOT NULL,"
+					+ "category VARCHAR(255) NOT NULL,"
 					+ "caption VARCHAR(255) NOT NULL,"
          			+ "image_url VARCHAR(512) NOT NULL,"
 					+ "CreatedDateTime DATETIME NOT NULL,"
 					+ "PRIMARY KEY (id),"
-					+ "FOREIGN KEY (user_id) REFERENCES Users(user_id)"
+					+ "FOREIGN KEY (user_id) REFERENCES Users(user_id),"
+					+ "FOREIGN KEY (template_id) REFERENCES Templates(template_id)"
 					+ ")";
 			statement.executeUpdate(sql);
 			

@@ -11,12 +11,19 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.json.JSONObject;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+
+import db.DBConnection;
+import db.DBConnectionFactory;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -57,33 +64,53 @@ public class CreateMeme extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		String template = request.getParameter("template");
-		String upText = request.getParameter("upText");
-		String downText = request.getParameter("downText");
 		
+		JSONObject input = RpcHelper.readJSONObject(request);
+		String templateId = input.getString("templateId");
+		String category = input.getString("category");
+		String caption = input.getString("caption");
+		String upText = input.getString("upText");
+		String downText = input.getString("downText");
+		
+		
+		
+		DBConnection connection = DBConnectionFactory.getConnection();
 		MemeGenerateAPI api = new MemeGenerateAPI();
+		HttpSession session = request.getSession(false);
+		JSONObject obj = new JSONObject();
 		byte[] image = null;
 		
 		
 		//create memes via the api
 		try {
-			image = api.createMeme(template, upText, downText);
+			image = api.createMeme(templateId, upText, downText);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		try {
-			//store the relevant information in the sql server
-			
+			String userId = session.getAttribute("user_id").toString();
+
 			//store it in the google cloud  
-			String objectName = "test.png";
+			String objectName = userId + upText + downText+ ".png";
 			Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 		    BlobId blobId = BlobId.of(bucketName, objectName);
 		    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 		    Blob blob = storage.create(blobInfo, image);
+
+		    String imageUrl = "//storage.googleapis.com/meme_generator/" +objectName;
+			//store the relevant information in the sql server
+		    connection.insertMemes(userId, templateId, category, caption,
+		    		imageUrl);
+		    
+		    obj.put("status", "OK").put("user_id", userId).put("image_url", imageUrl);
+		    RpcHelper.writeJsonObject(response, obj);
+		    
 		    
 	   }catch(Exception e) {
 		    e.printStackTrace();   
+	   }finally {
+		    connection.close();
 	   }
 	}
 

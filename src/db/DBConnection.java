@@ -94,5 +94,17 @@ public interface DBConnection {
 	public void insertTemplate(String templateName);
 
 	public String searchTemplate(String templateName);
+	
+	public boolean followUser(String fromUserId, String toUserId);
+	
+	public boolean searchUser(String userId);
+
+	public Set<String> searchFollowedUser(String fromUserId);
+	
+	public Set<String> searchFollowers(String toUserId);
+	
+	public boolean unFollowUser(String fromUserId, String toUserId);
+	
+	public void insertMemes(String userId, String templateId, String category, String caption, String image_url);
 }
 

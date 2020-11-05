@@ -7,6 +7,15 @@
   var user_fullname = 'John';
   var lng = -122.08;
   var lat = 37.38;
+  
+  var mock_recommend_data = [{"url": "//storage.googleapis.com/meme_generator/mememasterCS701.png", 
+                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/blb.png", 
+                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/boat.png", 
+                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/sohappy.png", 
+                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/fine.png", 
+                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/hipster.png", 
+                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/interesting.png", 
+                "caption": "Hello EveryOne","author":"Ray"}]
 
   /**
    * Initialize major event handlers
@@ -19,10 +28,11 @@
     document.querySelector('#login-btn').addEventListener('click', login);
     document.querySelector('#register-form-btn').addEventListener('click', showRegisterForm);
     document.querySelector('#register-btn').addEventListener('click', register);
-   // document.querySelector('#fav-btn').addEventListener('click', loadFavoriteItems);
-   // document.querySelector('#recommend-btn').addEventListener('click', loadRecommendedItems);
+    document.querySelector('#following-btn').addEventListener('click', loadFollowingItems);
+    document.querySelector('#recommend-btn').addEventListener('click', loadRecommendedItems);
     validateSession();
      //onSessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
+    listMemes(mock_recommend_data, "recommend")
     //onSessionInvalid();
   }
 
@@ -253,7 +263,7 @@
   }
 
   function showErrorMessage(msg) {
-    var itemList = document.querySelector('#item-list');
+    var itemList = document.querySelector('#memes');
     itemList.innerHTML = '<p class="notice"><i class="fa fa-exclamation-circle"></i> ' +
       msg + '</p>';
   }
@@ -320,7 +330,7 @@
    */
   function loadTemplates() {
     console.log('loadTemplates');
-    //ctiveBtn('create-btn');
+    //activeBtn('create-btn');
 
     // // The request parameters
     // var url = './templates?page=1&var=2';
@@ -345,67 +355,72 @@
     //     showErrorMessage('Cannot load templates.');
     //   }
     // );
-    listItems(["//storage.googleapis.com/meme_generator/aag.png"])
+    listTemplates(["//storage.googleapis.com/meme_generator/buzz.png"])
+      document.querySelector('#create').addEventListener('click', createMemes);
   }
 
   /**
    * API #2 Load favorite (or visited) items API end point: [GET]
    * /history?user_id=1111
    */
-  function loadFavoriteItems() {
-    activeBtn('fav-btn');
-
+  function loadFollowingItems() {
+    activeBtn('following-btn');
+    console.log("Load Following Items");
     // request parameters
-    var url = './history';
+    var url = './follow';
     var params = 'user_id=' + user_id;
     var req = JSON.stringify({});
 
     // display loading message
-    showLoadingMessage('Loading favorite items...');
+    //showLoadingMessage('Loading Following items...');
 
     // make AJAX call
-    ajax('GET', url + '?' + params, req, function(res) {
-      var items = JSON.parse(res);
-      if (!items || items.length === 0) {
-        showWarningMessage('No favorite item.');
-      } else {
-        listItems(items);
-      }
-    }, function() {
-      showErrorMessage('Cannot load favorite items.');
-    });
-  }
-
+  //   ajax('GET', url + '?' + params, req, function(res) {
+  //     var items = JSON.parse(res);
+  //     if (!items || items.length === 0) {
+  //       showWarningMessage('No favorite item.');
+  //     } else {
+  //       listMemes(items);
+  //     }
+  //   }, function() {
+  //     showErrorMessage('Cannot load Following items.');
+  //   });
+  // }
+    listMemes([{"url": "//storage.googleapis.com/meme_generator/afraid.png", 
+                 "caption": "Hello World", "author": "Charlie"}], "following")
+ }
+              
   /**
    * API #3 Load recommended items API end point: [GET]
    * /recommendation?user_id=1111
    */
   function loadRecommendedItems() {
     activeBtn('recommend-btn');
-
+    console.log("Load Recommend Items")
     // request parameters
-    var url = './recommendation' + '?' + 'user_id=' + user_id + '&lat=' + lat + '&lon=' + lng;
-    var data = null;
+    //var url = './recommendation' + '?' + 'user_id=' + user_id + '&lat=' + lat + '&lon=' + lng;
+    //var data = null;
 
     // display loading message
-    showLoadingMessage('Loading recommended items...');
+    //showLoadingMessage('Loading recommended items...');
 
     // make AJAX call
-    ajax('GET', url, data,
-      // successful callback
-      function(res) {
-        var items = JSON.parse(res);
-        if (!items || items.length === 0) {
-          showWarningMessage('No recommended item. Make sure you have favorites.');
-        } else {
-          listItems(items);
-        }
-      },
-      // failed callback
-      function() {
-        showErrorMessage('Cannot load recommended items.');
-      }
-    );
+    // ajax('GET', url, data,
+    //   // successful callback
+    //   function(res) {
+    //     var items = JSON.parse(res);
+    //     if (!items || items.length === 0) {
+    //       showWarningMessage('No recommended item. Make sure you have favorites.');
+    //     } else {
+    //       listItems(items);
+    //     }
+    //   },
+    //   // failed callback
+    //   function() {
+    //     showErrorMessage('Cannot load recommended items.');
+    //   }
+    // );
+    listMemes(mock_recommend_data, "recommend")
   }
 
   /**
@@ -450,14 +465,16 @@
    *
    * @param items - An array of item JSON objects
    */
-  function listItems(items) {
+  function listTemplates(items) {
     var images = document.querySelector('#memes');
     images.innerHTML = '';
     //to be developed
     //images.innerHTML = $create('div'); // clear current results
-    //for (var i = 0; i < items.length; i++) {
-       //addItem(images, items[i]);
-    //}
+    for (var i = 0; i < items.length; i++) {
+       addTemplate(images, items[i]);
+    }
+    images.innerHTML =  images.innerHTML + '<div> <input type ="text" placeholder ="upText" id = "upText" ></input> <input type ="text" placeholder = "downText" id = "downText" ></input><input type ="text" placeholder = "category" id = "category" ></input><input type ="text" placeholder = "caption" id = "caption" ></input><input type="submit" id = "create" value = "Create"></input> </div>';
+    
   }
 
   /**
@@ -472,7 +489,7 @@
 	    <figcaption>Computer Science memes</figcaption>
 	</figure>
    */
-  function addItem(itemList, item) {
+  function addTemplate(itemList, item) {
     // create the <figure> tag and specify the id and class attributes
     var figure = $create('figure');
 
@@ -484,13 +501,74 @@
         src: 'https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png'
       }));
     }
-   
-    //figure
-    figure.appendChild($create('figcaption'));
-
     itemList.appendChild(figure);
   }
+  
+  function listMemes(items, feature) {
+    var images = document.querySelector('#memes');
+    images.innerHTML = '';
+    //to be developed
+    //images.innerHTML = $create('div'); // clear current results
+    for (var i = 0; i < items.length; i++) {
+       addMemes(images, items[i], feature);
+    }
+  }
+  
+  function addMemes(itemList, item, feature) {
+    // create the <figure> tag and specify the id and class attributes
+    var figure = $create('figure');
 
+    // item image
+    if (item.url) {
+      figure.appendChild($create('img', {src: item.url}));
+    } else {
+      figure.appendChild($create('img', {
+        src: 'https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png'
+      }));
+    }
+   
+    //figure
+    var author = $create('figcaption');
+    author.innerHTML = '<i class="fa fa-user"></i>'+ item.author
+    if(feature == "recommend"){author.innerHTML += '<i class="fa fa-user-plus add-user"> </i>';}
+    var figcaption = $create('figcaption');
+    figcaption.innerHTML = item.caption;
+    if (feature != "create"){figcaption.innerHTML += '<i class="fa fa-heart fav">10</i>';}
+    figure.appendChild(author);
+    figure.appendChild(figcaption);
+    
+    
+    itemList.appendChild(figure);
+  }
+   
+  function createMemes(information){
+        // request parameters
+    console.log("create");
+    var templateId = 'buzz';
+    var category = document.querySelector('#category').value;
+    var caption = document.querySelector('#caption').value;
+    var upText = document.querySelector('#upText').value;
+    var downText = document.querySelector('#downText').value;
+       
+    var url = './create';
+    var req = JSON.stringify({
+        templateId : templateId, 
+        category : category,
+        caption: caption, 
+        upText: upText, 
+        downText: downText});
+    console.log(req);
+    ajax('POST', url, req,
+      // successful callback
+       function(res) {
+         var result = JSON.parse(res);
+         if (result.status === 'OK' || result.result === 'SUCCESS') {
+           listMemes([{"url": result.image_url, 
+                 "caption": caption, "author": result.user_id }], "create")
+         }
+       });
+    
+  }
   init();
 
 })();

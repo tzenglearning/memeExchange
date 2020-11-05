@@ -103,8 +103,8 @@ public class TemplateCreation {
 				
 				//insert into sql
 				
-//				sqlConn.insertTemplate(objectName);
-//				System.out.println(objectName + " inserted into sql");
+				sqlConn.insertTemplate(objectName);
+				System.out.println(objectName + " inserted into sql");
 				
 //			    //save to gcp
 				Storage storage = StorageOptions.newBuilder().setProjectId(GCPUtil.projectId).build().getService();

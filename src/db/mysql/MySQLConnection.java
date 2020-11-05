@@ -49,7 +49,7 @@ public class MySQLConnection implements DBConnection {
         
 		String url = String.format("storage.googleapis.com/meme_generator/%s.png", templateName);
 		try {
-			String sql = "INSERT IGNORE INTO Templates(name, image_url) VALUES (?,?)";
+			String sql = "INSERT IGNORE INTO Templates(template_id, image_url) VALUES (?,?)";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, templateName);
 			ps.setString(2, url);
@@ -202,6 +202,105 @@ public class MySQLConnection implements DBConnection {
 		return name;
 
 	}
+	
+    @Override
+	public boolean followUser(String fromUserId, String toUserId){
+		if(conn == null) {
+			System.err.println("DB Connection Failed");
+			return false;
+		}
+
+		try {
+			String sql = "INSERT IGNORE INTO Relationships (from_user_id, to_user_id) VALUES (?,?)";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1,fromUserId);
+			ps.setString(2,toUserId);
+			
+			return ps.executeUpdate() == 1;
+			
+		} catch (SQLException e) {
+		    System.out.println(e.getMessage());	
+		}
+		
+		return true;
+	}
+    
+    @Override
+    public boolean searchUser(String userId) {
+    	if (conn == null) {
+    		System.err.println("DB Connection Failed");
+			return false;
+		}		
+		String name = "";
+		try {
+			String sql = "SELECT user_id FROM Users WHERE user_id = ? ";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, userId);
+			ResultSet rs = statement.executeQuery();
+            return rs == null;
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return false;
+
+    	
+    }
+	@Override
+	public Set<String> searchFollowedUser(String fromUserId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<String> searchFollowers(String toUserId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+    @Override
+	public boolean unFollowUser(String fromUserId, String toUserId){
+		if(conn == null) {
+			System.err.println("DB Connection Failed");
+			return false;
+		}
+
+		try {
+			String sql = "DELETE FROM Relationships WHERE from_user_id = ? AND to_user_id = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1,fromUserId);
+			ps.setString(2,toUserId);
+			
+			return ps.executeUpdate() == 1;
+			
+		} catch (SQLException e) {
+		    System.out.println(e.getMessage());	
+		}
+		
+		return true;
+	}
+    
+    @Override
+    public void insertMemes(String userId, String templateId, String category, String caption, String image_url) {
+        if (conn == null) {
+            System.err.println("DB connection failed");
+            return;
+        }
+        
+		try {
+			String sql = "INSERT IGNORE INTO Memes(user_id, template_id, category, caption, image_url) VALUES (?,?,?,?,?)";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, userId);
+			ps.setString(2, templateId);
+			ps.setString(3, category);
+			ps.setString(4, caption);
+			ps.setString(5, image_url);
+			ps.execute();
+			
+	   }catch(Exception e) {
+			e.printStackTrace();
+		}
+    }
+
+    
 
 
 }

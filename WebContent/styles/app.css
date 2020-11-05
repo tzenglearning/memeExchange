@@ -321,6 +321,10 @@ ul {
 	color: #F13F3F;
 }
 
+.add-user:hover {
+	color: #0000FF;
+}
+
 .fav-link:hover {
 	color: #F13F3F;
 }
@@ -394,7 +398,9 @@ div#memes figure figcaption {
 	color: #444;
   line-height: 1.5;
 }
-
+div#memes i.fa.fa-user-plus{
+  float: right
+}
 div#memes i.fa.fa-heart{
   float: right
 }
