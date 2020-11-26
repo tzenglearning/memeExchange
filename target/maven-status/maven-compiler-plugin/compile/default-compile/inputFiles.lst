@@ -5,8 +5,10 @@
 /Users/tzenglearning/eclipse-workspace/music/src/rpc/test.java
 /Users/tzenglearning/eclipse-workspace/music/src/db/mysql/MySQLTableCreation.java
 /Users/tzenglearning/eclipse-workspace/music/src/external/MemeGenerateAPI.java
+/Users/tzenglearning/eclipse-workspace/music/src/entity/Meme.java
 /Users/tzenglearning/eclipse-workspace/music/src/rpc/RecommendItem.java
 /Users/tzenglearning/eclipse-workspace/music/src/rpc/CreateMeme.java
+/Users/tzenglearning/eclipse-workspace/music/src/rpc/FollowUser.java
 /Users/tzenglearning/eclipse-workspace/music/src/external/GCPUtil.java
 /Users/tzenglearning/eclipse-workspace/music/src/db/DBConnection.java
 /Users/tzenglearning/eclipse-workspace/music/src/db/mysql/MySQLConnection.java

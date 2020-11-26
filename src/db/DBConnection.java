@@ -106,5 +106,7 @@ public interface DBConnection {
 	public boolean unFollowUser(String fromUserId, String toUserId);
 	
 	public void insertMemes(String userId, String templateId, String category, String caption, String image_url);
+	
+	public Set<String> searchUserMemes(String userId);
 }
 

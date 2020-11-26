@@ -73,7 +73,7 @@ public class TemplateCreation {
 	        JSONArray jsonObjectArray = new JSONArray(response.toString());
 	        
 
-	        for(int i = 0; i < jsonObjectArray.length(); i++) {
+	        for(int i = 0; i < 1; i++) {
 
 	        	//construct url
 	        	String link = jsonObjectArray.getJSONObject(i).getString("template");

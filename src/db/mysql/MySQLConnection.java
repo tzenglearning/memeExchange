@@ -299,6 +299,32 @@ public class MySQLConnection implements DBConnection {
 			e.printStackTrace();
 		}
     }
+    
+    @Override
+    public Set<String> searchUserMemes(String userId) {
+    	if (conn == null) {
+    		System.err.println("DB Connection Failed");
+			return null;
+		}		
+		Set<String> set = new HashSet<>(); 
+		try {
+			
+			String sql = "SELECT image_url FROM Memes WHERE user_id = ? ";
+			
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, userId);
+			ResultSet rs = statement.executeQuery();
+            while(rs.next()) {
+            	set.add(rs.getString("image_url"));
+            }
+            return set;
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return null;
+
+    	
+    }
 
     
 

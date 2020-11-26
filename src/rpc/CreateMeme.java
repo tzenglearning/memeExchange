@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.io.IOException;
 import java.net.URL;
 
+import external.GCPUtil;
 import external.MemeGenerateAPI;
 
 import javax.servlet.ServletException;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.google.cloud.storage.Blob;
@@ -28,6 +30,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,14 +38,7 @@ import java.util.concurrent.TimeUnit;
  */
 @WebServlet("/create")
 public class CreateMeme extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	
-    // The ID of your GCP project
-    private static final String projectId = "memegenerator-293602";
-
-    // The ID of your GCS bucket
-    private static final String bucketName = "meme_generator";
-       
+	private static final long serialVersionUID = 1L;   
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -56,7 +52,27 @@ public class CreateMeme extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		DBConnection connection = DBConnectionFactory.getConnection();
+		HttpSession session = request.getSession(false);
+		
+		try {
+			String userId = "mememaster";
+					//session.getAttribute("user_id").toString();
+			Set<String> result = connection.searchUserMemes(userId);
+			JSONArray array = new JSONArray();
+			for(String image_url : result) {
+				JSONObject obj = new JSONObject();
+				obj.put("image_url",image_url);
+				array.put(obj);
+			}
+			RpcHelper.writeJsonArray(response, array);
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			connection.close();
+		}
+		
 	}
 
 	/**
@@ -93,10 +109,13 @@ public class CreateMeme extends HttpServlet {
 
 			//store it in the google cloud  
 			String objectName = userId + upText + downText+ ".png";
-			Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-		    BlobId blobId = BlobId.of(bucketName, objectName);
+			Storage storage = StorageOptions.newBuilder().setProjectId(GCPUtil.projectId).build().getService();
+		    BlobId blobId = BlobId.of(GCPUtil.bucketName, objectName);
 		    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 		    Blob blob = storage.create(blobInfo, image);
+		    
+		    System.out.println(objectName + " uploaded to gcp");
+			
 
 		    String imageUrl = "//storage.googleapis.com/meme_generator/" +objectName;
 			//store the relevant information in the sql server
