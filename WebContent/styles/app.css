@@ -1,428 +1,550 @@
 * {
-	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-	background: #434343;
-	color: #FFFFFF;
-	font-family: 'Open Sans', sans-serif;
-	font-weight: 300;
-	font-size: 0.9em;
+  background: #434343;
+  color: #ffffff;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300;
+  font-size: 0.9em;
 }
 
 ul {
-	list-style: none;
+  list-style: none;
 }
 
 /**
  * top header
  */
 .top-header {
-	align-items: center;
-	background: #DF574B;
-	box-shadow: 0px 2px 10px #333333;
-	display: flex;
-	height: 60px;
-	position: fixed;
-	top: 0;
-	width: 100%;
-	z-index: 1;
+  align-items: center;
+  background: #df574b;
+  box-shadow: 0px 2px 10px #333333;
+  display: flex;
+  height: 60px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
 }
 
 .avatar {
-	background: #FFFFFF;
-	border-radius: 50%;
-	color: #333C4D;
-	height: 40px;
-	margin-right: 20px;
-    margin-left: 10px;
-	padding-left: 9px;
-	padding-top: 5px;
-	width: 40px;
+  background: #ffffff;
+  border-radius: 50%;
+  color: #333c4d;
+  height: 40px;
+  margin-right: 20px;
+  margin-left: 10px;
+  padding-left: 9px;
+  padding-top: 5px;
+  width: 40px;
 }
 
 #logout-link {
-	padding-left: 10px;
-	color: white;
+  padding-left: 10px;
+  color: white;
 }
 
 /**
  * top navigation
  */
 .top-nav {
-	flex: 1;
+  flex: 1;
 }
 
 .top-nav a {
-	color: #F9F9F9;
-	font-weight: 400;
-	margin-left: 20px;
-	text-decoration: none;
+  color: #f9f9f9;
+  font-weight: 400;
+  margin-left: 20px;
+  text-decoration: none;
 }
 
 #welcome-msg {
-	border-right: 1px solid #FFFFFF;
-	padding-right: 10px;
+  border-right: 1px solid #ffffff;
+  padding-right: 10px;
 }
 
 /**
  * main container
  */
 .container {
-	margin: 60px auto;
-	max-width: 1000px;
-	min-width: 600px;
+  margin: 60px auto;
+  max-width: 1000px;
+  min-width: 600px;
 }
 
 /**
  * main header
  */
-.container>header {
-	align-items: center;
-	background:
-		url('http://eudreamvilla.com/wp-content/uploads/2017/10/romantic-dinner.jpg')
-		no-repeat 50% 40%;
-	background-size: 100%;
-	display: flex;
-	height: 250px;
+.container > header {
+  align-items: center;
+  background: url("http://eudreamvilla.com/wp-content/uploads/2017/10/romantic-dinner.jpg")
+    no-repeat 50% 40%;
+  background-size: 100%;
+  display: flex;
+  height: 250px;
 }
 
-.container>header p {
-	border-left: 1px solid #FFFFFF;
-	font-weight: 400;
-	font-size: 2em;
-	line-height: 1em;
-	margin-left: 220px;
-	padding-left: 5px;
+.container > header p {
+  border-left: 1px solid #ffffff;
+  font-weight: 400;
+  font-size: 2em;
+  line-height: 1em;
+  margin-left: 220px;
+  padding-left: 5px;
 }
 
-.container>header span {
-	color: #FBAF41;
+.container > header span {
+  color: #fbaf41;
 }
 
 /**
  * login form
  */
 #login-form {
-	color: #624630;
-	margin: 0px auto;
-	overflow: auto;
-	padding: 40px;
-	width: 300px;
-  
+  color: #624630;
+  margin: 0px auto;
+  overflow: auto;
+  padding: 40px;
+  width: 300px;
 }
 
 #login-form label {
-	display: block;
+  display: block;
 }
 
 #login-form input {
-	border: none;
-	display: block;
-	margin-bottom: 10px;
-	padding: 10px;
-	width: 100%;
+  border: none;
+  display: block;
+  margin-bottom: 10px;
+  padding: 10px;
+  width: 100%;
 }
 
 #login-error {
-	clear: both;
-	color: #990000;
-	padding-top: 10px;
+  clear: both;
+  color: #990000;
+  padding-top: 10px;
 }
 #login-form #register-form-btn {
-	cursor: pointer;
-	float: left;
-	padding: 8px 10px;
-	text-align: left;
+  cursor: pointer;
+  float: left;
+  padding: 8px 10px;
+  text-align: left;
 }
 
 #login-form #login-btn {
-	cursor: pointer;
-	float: right;
-	padding: 8px 20px;
-	text-align: right;
+  cursor: pointer;
+  float: right;
+  padding: 8px 20px;
+  text-align: right;
 }
 
 /**
  * register form
  */
 #register-form {
-	color: #624630;
-	margin: 0px auto;
-	overflow: auto;
-	padding: 40px;
-	width: 350px;
+  color: #624630;
+  margin: 0px auto;
+  overflow: auto;
+  padding: 40px;
+  width: 350px;
 }
 
 #register-form label {
-	display: block;
+  display: block;
 }
 
 #register-form input {
-	border: none;
-	display: block;
-	margin-bottom: 10px;
-	padding: 8px;
-	width: 100%;
+  border: none;
+  display: block;
+  margin-bottom: 10px;
+  padding: 8px;
+  width: 100%;
 }
 
 #register-form #login-form-btn {
-	cursor: pointer;
-	float: left;
-	padding: 8px 10px;
-	text-align: left;
+  cursor: pointer;
+  float: left;
+  padding: 8px 10px;
+  text-align: left;
 }
 
 #register-form #register-btn {
-	cursor: pointer;
-	float: right;
-	padding: 8px 20px;
-	text-align: right;
+  cursor: pointer;
+  float: right;
+  padding: 8px 20px;
+  text-align: right;
 }
 
 #register-result {
-	clear: both;
-	color: #990000;
-	padding-top: 10px;
+  clear: both;
+  color: #990000;
+  padding-top: 10px;
 }
 
 /**
  * main section
  */
 .main-section {
-	background: #F3BB43;
+  background: #f3bb43;
 }
 
 /**
  * aside
  */
 #item-nav {
-	float: left;
-	width: 180px;
+  float: left;
+  width: 180px;
 }
 
 .nav-icon {
-	color: #624630;
-	padding: 20px;
-	text-align: center;
+  color: #624630;
+  padding: 20px;
+  text-align: center;
 }
 
 /**
  * main navigation
  */
 .main-nav-btn {
-	background: none;
-	border-top: 1px solid #FFFFFF;
-	color: #FFFFFF;
-	display: block;
-	padding: 20px;
-	text-align: left;
-	text-decoration: none;
+  background: none;
+  border-top: 1px solid #ffffff;
+  color: #ffffff;
+  display: block;
+  padding: 20px;
+  text-align: left;
+  text-decoration: none;
 }
 
 .main-nav-btn:hover {
-	background: rgba(255, 255, 255, 0.8);
-	color: #624630;
+  background: rgba(255, 255, 255, 0.8);
+  color: #624630;
 }
 
 .main-nav-btn.active {
-	background: #F2EBD9;
-	color: #624630;
+  background: #f2ebd9;
+  color: #624630;
 }
 
 .main-nav-btn i {
-	width: 20px;
+  width: 20px;
 }
 
 /**
  * item list
  */
 #item-list {
-	background: #F2EBD9;
-	color: #624630;
-	list-style: none;
-	margin-left: 180px;
-	min-height: 250px;
-	padding: 10px;
+  background: #f2ebd9;
+  color: #624630;
+  list-style: none;
+  margin-left: 180px;
+  min-height: 250px;
+  padding: 10px;
 }
 
 #item-list .notice {
-	font-size: 16px;
-	padding: 60px;
-	text-align: center;
+  font-size: 16px;
+  padding: 60px;
+  text-align: center;
 }
 
 /**
  * item
  */
 .item {
-	align-items: center;
-	border-bottom: 1px solid #FFFFFF;
-	display: flex;
-	margin: 10px;
-	padding: 15px;
-	transition: background-color 100ms linear;
+  align-items: center;
+  border-bottom: 1px solid #ffffff;
+  display: flex;
+  margin: 10px;
+  padding: 15px;
+  transition: background-color 100ms linear;
 }
 
 .item:last-child {
-	border: none;
+  border: none;
 }
 
 .item:hover {
-	background: rgba(255, 255, 255, 0.8);
-	transition: background-color 100ms linear;
+  background: rgba(255, 255, 255, 0.8);
+  transition: background-color 100ms linear;
 }
 
 .item img {
-	border: 1px solid #FFFFFF;
-	height: 80px;
-	width: 80px;
+  border: 1px solid #ffffff;
+  height: 80px;
+  width: 80px;
 }
 
-.item>div:first-of-type {
-	flex: 1;
-	margin-left: 10px;
-	margin-right: 10px;
+.item > div:first-of-type {
+  flex: 1;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .item-name {
-	color: #624630;
-	font-weight: 400;
-	text-decoration: none;
+  color: #624630;
+  font-weight: 400;
+  text-decoration: none;
 }
 
 .item-name:hover {
-	text-decoration: underline;
+  text-decoration: underline;
 }
 
 .item-address {
-	line-height: 20px;
-	padding-right: 20px;
-	text-align: right;
+  line-height: 20px;
+  padding-right: 20px;
+  text-align: right;
 }
 
 .stars {
-	align-items: center;
-	display: flex;
-	padding-top: 10px;
+  align-items: center;
+  display: flex;
+  padding-top: 10px;
 }
 
 .fav-link {
-	border-left: 1px solid #FFFFFF;
-	cursor: pointer;
-	line-height: 60px;
-	text-align: center;
-	width: 60px;
+  border-left: 1px solid #ffffff;
+  cursor: pointer;
+  line-height: 60px;
+  text-align: center;
+  width: 60px;
 }
 
 .fav:hover {
-	color: #F13F3F;
+  color: #f13f3f;
 }
 
 .add-user:hover {
-	color: #0000FF;
+  color: #0000ff;
 }
 
 .fav-link:hover {
-	color: #F13F3F;
+  color: #f13f3f;
 }
 
 /**
  * footer section
  */
 footer {
-	background: #434343;
-	font-size: 0.8em;
-	height: 200px;
-	position: relative;
+  background: #434343;
+  font-size: 0.8em;
+  height: 200px;
+  position: relative;
 }
 
 footer p {
-	text-align: center;
+  text-align: center;
 }
 
 footer p.title {
-	font-size: 1.2em;
-	padding: 15px;
+  font-size: 1.2em;
+  padding: 15px;
 }
 
 footer ul {
-	align-items: center;
-	display: flex;
-	padding: 20px;
+  align-items: center;
+  display: flex;
+  padding: 20px;
 }
 
 footer ul li {
-	flex: 1;
+  flex: 1;
 }
 
-@font-face{font-family:'Calluna';
- src:url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/callunasansregular-webfont.woff') format('woff');
+@font-face {
+  font-family: "Calluna";
+  src: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/callunasansregular-webfont.woff")
+    format("woff");
 }
 body {
-	background: url(//subtlepatterns.com/patterns/scribble_light.png);
+  background: url(//subtlepatterns.com/patterns/scribble_light.png);
   font-family: Calluna, Arial, sans-serif;
   min-height: 1000px;
 }
+
+/* memes div */
+
 #memes {
-	column-width: 320px;
-	column-gap: 15px;
+  column-width: 320px;
+  column-gap: 15px;
   width: 90%;
-	max-width: 1100px;
-	margin: 50px auto;
+  max-width: 1100px;
+  margin: 50px auto;
 }
 
 div#memes figure {
-	background: #fefefe;
-	border: 2px solid #fcfcfc;
-	box-shadow: 0 1px 2px rgba(34, 25, 25, 0.4);
-	margin: 0 2px 15px;
-	padding: 15px;
-	padding-bottom: 10px;
-	transition: opacity .4s ease-in-out;
+  background: #fefefe;
+  border: 2px solid #fcfcfc;
+  box-shadow: 0 1px 2px rgba(34, 25, 25, 0.4);
+  margin: 0 2px 15px;
+  padding: 15px;
+  padding-bottom: 10px;
+  transition: opacity 0.4s ease-in-out;
   display: inline-block;
   column-break-inside: avoid;
 }
 
+div#memes figure2 {
+  background: #0f0000;
+  border: 2px solid #fcfcfc;
+  box-shadow: 0 1px 2px rgba(34, 25, 25, 0.4);
+  margin: 0 2px 15px;
+  padding: 15px;
+  padding-bottom: 10px;
+  transition: opacity 0.4s ease-in-out;
+  display: flex;
+  column-break-inside: avoid;
+}
+div#memes figure2 img {
+  width: 100%;
+  height: auto;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 15px;
+  margin-bottom: 5px;
+}
+
 div#memes figure img {
-	width: 100%; height: auto;
-	border-bottom: 1px solid #ccc;
-	padding-bottom: 15px;
-	margin-bottom: 5px;
+  width: 100%;
+  height: auto;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 15px;
+  margin-bottom: 5px;
+}
+
+figure.templates {
+  width: 200px;
+  height: 40px;
 }
 
 div#memes figure figcaption {
-  font-size: .9rem;
-	color: #444;
+  font-size: 0.9rem;
+  color: #444;
   line-height: 1.5;
 }
-div#memes i.fa.fa-user-plus{
-  float: right
+div#memes i.fa.fa-user-plus {
+  float: right;
 }
-div#memes i.fa.fa-heart{
-  float: right
+div#memes i.fa.fa-heart {
+  float: right;
 }
 
-div#memes small { 
+div#memes small {
   font-size: 1rem;
-  float: right; 
+  float: right;
   text-transform: uppercase;
   color: #aaa;
-} 
+}
 
-div#memes small a { 
-  color: #666; 
-  text-decoration: none; 
-  transition: .4s color;
+div#memes small a {
+  color: #666;
+  text-decoration: none;
+  transition: 0.4s color;
 }
 
 div#memes:hover figure:not(:hover) {
-	opacity: 0.4;
+  opacity: 0.4;
 }
 
-@media screen and (max-width: 750px) { 
-  #memes { column-gap: 0px; }
-  #memes figure { width: 100%; }
+@media screen and (max-width: 750px) {
+  #memes {
+    column-gap: 0px;
+  }
+  #memes figure {
+    width: 100%;
+  }
 }
+
+/*
+  create page
+*/
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 5px;
+}
+
+.row img {
+  flex: 75%;
+  max-width: 100%;
+  padding: 2px;
+  vertical-align: middle;
+}
+/* Create four equal columns that sit next to each other */
+.column {
+  flex: 15%;
+  max-width: 20%;
+  padding: 2px;
+}
+
+.column img {
+  flex: 75%;
+  max-width: 100%;
+  padding: 2px
+  vertical-align: middle;
+}
+
+/*Template Display */
+.templateDisplay {
+  max-width: 90%;
+  display: flex;
+  justify-content: center;
+}
+
+.templates {
+  height: 200px;
+  width: 200px;
+}
+
+.templates large {
+  height: 600px;
+  width: 600px;
+}
+
+.profileContainer {
+  max-width: 93.5rem;
+  margin: 0 auto;
+  padding: 0 2rem; 
+}
+
+.profile {
+  padding: 5rem 0;
+}
+
+.profile-image {
+    float: left;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 3rem;
+}
+
+.profile-image img {
+    border-radius: 50%;
+    width: 200px;
+}
+
+.profile-user-settings,
+.profile-stats,
+.profile-bio {
+    float: left;
+    width: calc(66.666% - 2rem);
+}
+
+.profile-user-settings {
+    margin-top: 1.1rem;
+}
+
+.profile-user-name {
+    display: inline-block;
+    font-size: 3.2rem;
+    font-weight: 300;
+    color: black;
+}
+
+

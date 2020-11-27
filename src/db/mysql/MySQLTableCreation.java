@@ -29,6 +29,9 @@ public class MySQLTableCreation {
 			
 			sql = "DROP TABLE IF EXISTS Relationships";
 			statement.executeUpdate(sql);
+			
+			sql = "DROP TABLE IF EXISTS History";
+			statement.executeUpdate(sql);	
 						
 			sql = "DROP TABLE IF EXISTS Memes";
 			statement.executeUpdate(sql);
@@ -55,7 +58,7 @@ public class MySQLTableCreation {
 					+  "id INT NOT NULL AUTO_INCREMENT,"
 				    + "FromUserId VARCHAR(255) NOT NULL,"
 				    + "ToUserId VARCHAR(255) NOT NULL," 
-				    + "CreatedDateTime DATETIME NOT NULL,"
+				    + "CreatedDateTime DATETIME NOT NULL default current_timestamp on update current_timestamp,"
 				    + "CONSTRAINT F1 FOREIGN KEY (FromUserId) REFERENCES Users(user_id),"
 				    + "CONSTRAINT F2 FOREIGN KEY (ToUserId) REFERENCES Users(user_id),"
 				    + "PRIMARY KEY (id)"
@@ -66,7 +69,7 @@ public class MySQLTableCreation {
 					+ "template_id VARCHAR(255) NOT NULL,"
 					+ "caption VARCHAR(255) NOT NULL,"
          			+ "image_url VARCHAR(512) NOT NULL,"
-					+ "CreatedDateTime DATETIME NOT NULL,"
+					+ "CreatedDateTime DATETIME NOT NULL default current_timestamp on update current_timestamp,"
 					+ "PRIMARY KEY (template_id)"
 					+ ")";
 			statement.executeUpdate(sql);
@@ -78,7 +81,7 @@ public class MySQLTableCreation {
 					+ "category VARCHAR(255) NOT NULL,"
 					+ "caption VARCHAR(255) NOT NULL,"
          			+ "image_url VARCHAR(512) NOT NULL,"
-					+ "CreatedDateTime DATETIME NOT NULL,"
+					+ "CreatedDateTime DATETIME NOT NULL default current_timestamp on update current_timestamp,"
 					+ "PRIMARY KEY (id),"
 					+ "FOREIGN KEY (user_id) REFERENCES Users(user_id),"
 					+ "FOREIGN KEY (template_id) REFERENCES Templates(template_id)"
@@ -89,9 +92,20 @@ public class MySQLTableCreation {
 					+ "id INT NOT NULL AUTO_INCREMENT,"
 					+ "subscriber_id VARCHAR(255) NOT NULL,"
 					+ "meme_id INT NOT NULL,"
-					+ "CreatedDateTime DATETIME NOT NULL,"
+					+ "CreatedDateTime DATETIME NOT NULL default current_timestamp on update current_timestamp,"
 					+ "PRIMARY KEY (id),"
 					+ "FOREIGN KEY (subscriber_id) REFERENCES Users(user_id),"
+					+ "FOREIGN KEY (meme_id) REFERENCES Memes(id)"
+					+ ")";
+			statement.executeUpdate(sql);
+			
+			sql = "CREATE TABLE History ("
+					+ "id INT NOT NULL AUTO_INCREMENT,"
+					+ "user_id VARCHAR(255) NOT NULL,"
+					+ "meme_id INT NOT NULL,"
+					+ "CreatedDateTime DATETIME NOT NULL default current_timestamp on update current_timestamp,"
+					+ "PRIMARY KEY (id),"
+					+ "FOREIGN KEY (user_id) REFERENCES Users(user_id),"
 					+ "FOREIGN KEY (meme_id) REFERENCES Memes(id)"
 					+ ")";
 			statement.executeUpdate(sql);

@@ -16,7 +16,7 @@ import db.DBConnectionFactory;
 /**
  * Servlet implementation class FollowUser
  */
-@WebServlet("/follow")
+@WebServlet("/friendship")
 public class FollowUser extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -56,10 +56,46 @@ public class FollowUser extends HttpServlet {
 			String userId = session.getAttribute("user_id").toString();
 			String toUserId = input.getString("to_user_id");
 			
-            if(!connection.searchUser(userId)) {
+            if(connection.searchUser(toUserId) == false) {
             	obj.put("status", "User Does not even exist");
             }
-            else if (connection.followUser(userId, toUserId)) {
+            else{
+            	connection.followUser(userId, toUserId);
+				obj.put("status", "OK");
+            }
+
+			RpcHelper.writeJsonObject(response, obj);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			connection.close();
+		}
+	}
+	
+	/**
+	 * @see HttpServlet#doDelete(HttpServletRequest, HttpServletResponse)
+	 */
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		DBConnection connection = DBConnectionFactory.getConnection();
+		
+		HttpSession session = request.getSession(false);
+		JSONObject obj = new JSONObject();
+		
+		if(session == null){
+			response.setStatus(403);
+			return;	
+		}
+		
+		try {
+			JSONObject input = RpcHelper.readJSONObject(request);
+			String userId = session.getAttribute("user_id").toString();
+			String toUserId = input.getString("to_user_id");
+			
+            if(connection.searchUser(toUserId) == false) {
+            	obj.put("status", "User Does not even exist");
+            }
+            else if (connection.unFollowUser(userId, toUserId)) {
 				obj.put("status", "OK");
 			} else {
 				obj.put("status", "Operation Failed");

@@ -30,9 +30,10 @@
     document.querySelector('#register-btn').addEventListener('click', register);
     document.querySelector('#following-btn').addEventListener('click', loadFollowingItems);
     document.querySelector('#recommend-btn').addEventListener('click', loadRecommendedItems);
-    validateSession();
-   //  onSessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
-    listMemes(mock_recommend_data, "recommend");
+    document.querySelector('#avatar').addEventListener('click', loadProfile);
+    //validateSession();
+    onSessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
+    listMemes(mock_recommend_data, "recommend")
     //onSessionInvalid();
   }
 
@@ -67,6 +68,8 @@
     var loginForm = document.querySelector('#login-form');
     var registerForm = document.querySelector('#register-form');
     var memes = document.querySelector('#memes');
+    var profileContainer = document.querySelector("#profileContainer");
+    var templates = document.querySelector('#templates');
     var avatar = document.querySelector('#avatar');
     var welcomeMsg = document.querySelector('#welcome-msg');
     var logoutBtn = document.querySelector('#logout-link');
@@ -100,7 +103,11 @@
   }
 
   function hideElement(element) {
-    element.style.display = 'none';
+    if(element != null){
+      element.style.display = 'none';
+    } else {
+      console.log("element is null");
+    }
   }
 
   function showElement(element, style) {
@@ -163,7 +170,7 @@
   function showLoginError() {
     document.querySelector('#login-error').innerHTML = 'Invalid username or password';
   }
-
+  
   function clearLoginError() {
     document.querySelector('#login-error').innerHTML = '';
   }
@@ -226,7 +233,6 @@
   function clearRegisterResult() {
     document.querySelector('#register-result').innerHTML = '';
   }
-
 
   // -----------------------------------
   // Helper Functions
@@ -295,9 +301,7 @@
    */
   function ajax(method, url, data, successCallback, errorCallback) {
     var xhr = new XMLHttpRequest();
-
     xhr.open(method, url, true);
-
     xhr.onload = function() {
       if (xhr.status === 200) {
         successCallback(xhr.responseText);
@@ -322,7 +326,7 @@
 
   // -------------------------------------
   // AJAX call server-side APIs
-  // -------------------------------------
+  // ------------------------------------- 
 
   /**
    * API #1 Load the templates API end point: [GET]
@@ -330,6 +334,7 @@
    */
   function loadTemplates() {
     console.log('loadTemplates');
+    showElement(memes);
     //activeBtn('create-btn');
 
     // // The request parameters
@@ -355,8 +360,7 @@
     //     showErrorMessage('Cannot load templates.');
     //   }
     // );
-    listTemplates(["//storage.googleapis.com/meme_generator/buzz.png","//storage.googleapis.com/meme_generator/buzz.png"])
-      document.querySelector('#create').addEventListener('click', createMemes);
+    simpleListTemplates(["//storage.googleapis.com/meme_generator/buzz.png", "//storage.googleapis.com/meme_generator/boat.png","//storage.googleapis.com/meme_generator/buzz.png"  ])
   }
 
   /**
@@ -386,17 +390,96 @@
   //     showErrorMessage('Cannot load Following items.');
   //   });
   // }
-    listMemes([{"url": "//storage.googleapis.com/meme_generator/afraid.png", 
+    simpleListMemes([{"url": "//storage.googleapis.com/meme_generator/afraid.png", 
                  "caption": "Hello World", "author": "Charlie"}], "following")
  }
-              
+
+  // -------------------------------------
+  // Profile page frontend
+  // ------------------------------------- 
+  /*
+  Calls the relevant functions to display the profile page:
+    populateProfileHeader
+    listProfileMems
+  */ 
+  function loadProfile() {
+    activeBtn('avatar');
+    console.log("profile");
+    populateProfileHeader();
+    listProfileMemes(); 
+  }
+  
+  function populateProfileHeader() { 
+    profileContainer.innerHTML = '';
+    showElement(profileContainer);
+    var profile = $create('div', {});
+    profile.setAttribute("class", "profile");
+    
+    populateProfileImage(profile);
+    populateProfileUserSettings(profile);
+    
+    profileContainer.appendChild(profile);
+  }
+  
+  function populateProfileImage(profile) {
+    var profileImage = $create('div', {});
+    profileImage.setAttribute("class", "profile-image");
+    var image = $create('img', {src: "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-grey-photo-placeholder-illustrations-vectors-default-avatar-profile-icon-grey-photo-placeholder-99724602.jpg"}); //hardcode
+    profileImage.appendChild(image);
+    profile.appendChild(profileImage);
+  }
+  
+  function populateProfileUserSettings(profile) {
+    var profileUserSettings = $create('div', {});
+    profileUserSettings.setAttribute("class", "profile-user-settings");
+    var profileUserName = $create('h1', {});
+    profileUserName.setAttribute("class", "profile-user-name");
+    
+    let userName = "Charlieferguson";
+    profileUserName.textContent += '@' + userName;
+    profileUserSettings.appendChild(profileUserName);
+    profile.appendChild(profileUserSettings);
+  }
+  
+  function populateMemesOnProfile() {
+    showElement(memes);
+    
+    var images = document.querySelector('#memes');
+    images.innerHTML = '';
+     listMemes(mock_recommend_data, "create");
+    
+  }
+  
+  function listProfileMemes() { 
+    prepProfilePage();
+    populateMemesOnProfile();
+  }
+  
+  /* prepProfilePage():
+   * clears all elements (except for the header) off of the page 
+   * for a clean slate. 
+   */
+  function prepProfilePage() {
+    var tmps = document.querySelectorAll('templates');
+    for(var i = 0; i < tmps.length; i++) {
+      hideElement(tmps[i]);
+    }
+}
+  
   /**
    * API #3 Load recommended items API end point: [GET]
    * /recommendation?user_id=1111
    */
   function loadRecommendedItems() {
     activeBtn('recommend-btn');
-    console.log("Load Recommend Items")
+    showElement(memes);
+    hideElement(profileContainer);
+    var tmps = document.querySelectorAll('templates');
+    for(var i = 0; i < tmps.length; i++) {
+      hideElement(tmps[i]);
+    }
+    console.log("Load Recommend Items");
+    /*
     // request parameters
     //var url = './recommendation' + '?' + 'user_id=' + user_id + '&lat=' + lat + '&lon=' + lng;
     //var data = null;
@@ -420,7 +503,8 @@
     //     showErrorMessage('Cannot load recommended items.');
     //   }
     // );
-    listMemes(mock_recommend_data, "recommend")
+    */
+    listMemes(mock_recommend_data, "recommend");
   }
 
   /**
@@ -460,21 +544,95 @@
   // Create item list
   // -------------------------------------
 
+  /*
+  Adds the template images as figures to the document
+  TODO: I need to refactor this for clarity...
+  */
+  function simpleListTemplates(templates) { 
+    var memes = document.querySelector('#memes');
+    hideElement(memes);
+    hideElement(profileContainer);
+
+
+    var images = document.querySelector('#templates');
+    images.innerHTML = '';
+    var container = $create('div', {id: "templates"});
+    container.setAttribute('class', 'templateDisplay');
+    var row = $create('div', {});
+    row.setAttribute("class", "row");
+    for (var i = 0; i < templates.length; i++) {
+      let column = $create('div', {});
+      column.setAttribute("class", "column");
+      let id = "fig" + i.toString(10);
+      var template = $create('templates', {id: id});
+      
+      if(templates[i]) { 
+        console.log('creating simple template');
+        var img = $create('img', {src: templates[i]});
+        img.setAttribute("class", "img");
+        template.appendChild(img);
+        column.appendChild(template)
+        row.appendChild(column);
+      } else {
+        console.log("No image");
+        figure.appendChild($create('img', {
+        src: 'https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png'
+        }));
+      }
+      container.appendChild(row);
+      images.appendChild(container);
+    }
+       let matches = images.querySelectorAll("div.row > div.column > templates");
+      for(var i = 0; i < matches.length; i++) {
+          matches[i].addEventListener('click', function() {displayTemplate(this, matches)});
+      }
+  }
+  
+  function displayTemplate(tmp, matches) { 
+    console.log("displayTemplate");
+    var src;
+    for(var i = 0; i < matches.length; i++) {
+      console.log(matches[i]);
+      if(matches[i].id == tmp.id) {
+        src = matches[i].querySelector(".img").src;
+        hideElement(matches[i]);
+        displayCreate(src);
+      } else {
+        hideElement(matches[i]);
+      }
+    } 
+  }
+  
+  /*
+    I need to make this img be put into a container that will allow me to remove it anytime there is a new page being loaded
+  */
+  function displayCreate(img) {
+    var figure = $create('img', {src: img});
+    var template = $create('templates', {});
+    
+    var templateContainer = document.querySelector('#templates');
+    templateContainer.innerHTML = '';
+    figure.setAttribute("class", "templates large");
+    template.appendChild(figure);
+    template.innerHTML = template.innerHTML + '<div> <input type ="text" placeholder ="upText" id = "upText" ></input> <input type ="text" placeholder = "downText" id = "downText" ></input><input type ="text" placeholder = "category" id = "category" ></input><input type ="text" placeholder = "caption" id = "caption" ></input><input type="submit" id = "create" value = "Create"></input> </div>';
+    templateContainer.appendChild(template);
+  }
   /**
    * List recommendation items base on the data received
-   *
+   
    * @param items - An array of item JSON objects
    */
+  
   function listTemplates(items) {
+    showElement(memes);
     var images = document.querySelector('#memes');
     images.innerHTML = '';
-    //to be developed
-    //images.innerHTML = $create('div'); // clear current results
+    var ids =  [];
     for (var i = 0; i < items.length; i++) {
-       addTemplate(images, items[i]);
+      let id = "img" + i.toString(10);
+      addTemplate(images, items[i], id);
+      ids.push(id);
     }
-    images.innerHTML =  images.innerHTML + '<div> <input type ="text" placeholder ="upText" id = "upText" ></input> <input type ="text" placeholder = "downText" id = "downText" ></input><input type ="text" placeholder = "category" id = "category" ></input><input type ="text" placeholder = "caption" id = "caption" ></input><input type="submit" id = "create" value = "Create"></input> </div>';
-    
   }
 
   /**
@@ -489,13 +647,25 @@
 	    <figcaption>Computer Science memes</figcaption>
 	</figure>
    */
-  function addTemplate(itemList, item) {
+  function addTemplate(itemList, item, id) {
     // create the <figure> tag and specify the id and class attributes
+    var figure = $create('figure', {id: id});
+    figure.setAttribute("class", "figure2");
     // item image
-    var img = $create('img', {src: item});
-    img.setAttribute("class", "templates");
-    itemList.appendChild(img);
+    if (item) {
+      var img = $create('img', {src: item});
+      figure.appendChild(img);
+    } else {
+      figure.appendChild($create('img', {
+        src: 'https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png'
+      }));
+    }
+    itemList.appendChild(figure);
   }
+  
+  // ***********************
+  // Listing memes on reccomended (maybe following) page(s)
+  // ***********************
   
   function listMemes(items, feature) {
     var images = document.querySelector('#memes');
@@ -508,9 +678,9 @@
   }
   
   function addMemes(itemList, item, feature) {
+    console.log("add Memes");
     // create the <figure> tag and specify the id and class attributes
     var figure = $create('figure');
-
     // item image
     if (item.url) {
       figure.appendChild($create('img', {src: item.url}));
@@ -519,19 +689,34 @@
         src: 'https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png'
       }));
     }
-   
     //figure
     var author = $create('figcaption');
     author.innerHTML = '<i class="fa fa-user"></i>'+ item.author
-    if(feature == "recommend"){author.innerHTML += '<i class="fa fa-user-plus add-user"> </i>';}
+    if(feature == "recommend"){author.innerHTML += '<i class="fa fa-user-plus add-user"> </i>';} 
     var figcaption = $create('figcaption');
     figcaption.innerHTML = item.caption;
-    if (feature != "create"){figcaption.innerHTML += '<i class="fa fa-heart fav">10</i>';}
+    if (feature != "create"){figcaption.innerHTML += '<i class="fa fa-heart fav" id= "heart">10</i>';}
+    if (feature == "create"){
+      console.log("create feature");
+    }
     figure.appendChild(author);
     figure.appendChild(figcaption);
-    
-    
     itemList.appendChild(figure);
+    addLikeListener();
+  }
+  
+  function addLikeListener() {
+    var memes = document.querySelector("#memes");
+    let matches = memes.querySelectorAll("figure > figcaption > #heart");
+    console.log(matches.length);
+      for(var i = 0; i < matches.length; i++) {
+          matches[i].addEventListener('click', function() {memeLike(matches[i])});
+      }
+  }
+  
+  function memeLike(meme) {
+    console.log("liked this meme");
+    console.log(meme);
   }
    
   function createMemes(information){
@@ -565,3 +750,4 @@
   init();
 
 })();
+
