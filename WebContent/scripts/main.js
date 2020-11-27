@@ -33,8 +33,8 @@
     document.querySelector('#following-btn').addEventListener('click', loadFollowingItems);
     document.querySelector('#recommend-btn').addEventListener('click', loadRecommendedItems);
     document.querySelector('#avatar').addEventListener('click', loadProfile);
-    //validateSession();
-    onSessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
+    validateSession();
+    //onSessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
     listMemes(mock_recommend_data, "recommend")
     //onSessionInvalid();
   }

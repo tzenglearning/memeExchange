@@ -197,6 +197,7 @@ public class MySQLConnection implements DBConnection {
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1,fromUserId);
 			ps.setString(2,toUserId);
+			ps.execute();
 			
 			return;
 			
