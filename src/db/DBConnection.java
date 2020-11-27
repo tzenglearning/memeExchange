@@ -3,6 +3,8 @@ package db;
 import java.util.List;
 import java.util.Set;
 
+import entity.Meme;
+
 //import entity.Item;
 
 public interface DBConnection {
@@ -95,7 +97,9 @@ public interface DBConnection {
 
 	public String searchTemplate(String templateName);
 	
-	public boolean followUser(String fromUserId, String toUserId);
+	public void followUser(String fromUserId, String toUserId);
+	
+	public boolean followedUser(String fromUserId, String toUserId);
 	
 	public boolean searchUser(String userId);
 
@@ -108,5 +112,16 @@ public interface DBConnection {
 	public void insertMemes(String userId, String templateId, String category, String caption, String image_url);
 	
 	public Set<String> searchUserMemes(String userId);
+	
+	public void likeMeme(String userId, String memeId);
+	
+	public boolean likedMeme(String userId, int memeId);
+	
+	public void unlikeMeme(String userId, String memeId);
+
+	public int getNumberOfLikes(String memeId);
+	
+	public Set<Meme> getFeeds(String userId);
+	
 }
 

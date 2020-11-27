@@ -325,7 +325,7 @@ ul {
 	color: #0000FF;
 }
 
-.fav-link:hover {
+.fa-heart {
 	color: #F13F3F;
 }
 
@@ -401,7 +401,15 @@ div#memes figure figcaption {
 div#memes i.fa.fa-user-plus{
   float: right
 }
+div#memes i.fas.fa-user-friends{
+  float: right
+}
+
 div#memes i.fa.fa-heart{
+  float: right
+}
+
+div#memes i.fa.fa-heart-o{
   float: right
 }
 
@@ -425,4 +433,10 @@ div#memes:hover figure:not(:hover) {
 @media screen and (max-width: 750px) { 
   #memes { column-gap: 0px; }
   #memes figure { width: 100%; }
+}
+
+img.templates{
+  border-radius: 10px;
+  box-shadow: 3px 3px 3px #888;
+  border: 1px solid #eee;
 }

@@ -8,14 +8,16 @@
   var lng = -122.08;
   var lat = 37.38;
   
-  var mock_recommend_data = [{"url": "//storage.googleapis.com/meme_generator/mememasterCS701.png", 
-                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/blb.png", 
-                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/boat.png", 
-                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/sohappy.png", 
-                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/fine.png", 
-                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/hipster.png", 
-                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/interesting.png", 
-                "caption": "Hello EveryOne","author":"Ray"}]
+  var mock_recommend_data = [{"id": "1", "url": "//storage.googleapis.com/meme_generator/mememasterCS701.png", 
+                "caption": "Hello EveryOne","author":"mememaster", "favorite": true, "numberOfLikes":"5", "followed":false},{
+"id": "2", "url": "//storage.googleapis.com/meme_generator/blb.png", 
+                "caption": "Hello EveryOne","author":"Ray","favorite": false,"numberOfLikes":"5","followed":false},{"id": "3", "url": "//storage.googleapis.com/meme_generator/boat.png", 
+                "caption": "Hello EveryOne","author":"mememaster","favorite": false,"numberOfLikes":"5","followed":false},{"id": "4", "url": "//storage.googleapis.com/meme_generator/boat.png", 
+                "caption": "Hello EveryOne","author":"mememaster","favorite": false,"numberOfLikes":"5","followed":false},{"id": "5", "url": "//storage.googleapis.com/meme_generator/sohappy.png", 
+                "caption": "Hello EveryOne","author":"mememaster","favorite": false,"numberOfLikes":"5","followed":false},{"id":"6", "url": "//storage.googleapis.com/meme_generator/fine.png", 
+                "caption": "Hello EveryOne","author":"mememaster","favorite": false,"numberOfLikes":"5","followed":false},{"id":"7", "url": "//storage.googleapis.com/meme_generator/hipster.png", 
+                "caption": "Hello EveryOne","author":"mememaster","favorite": false,"numberOfLikes":"5","followed":false},{"id": "8", "url": "//storage.googleapis.com/meme_generator/interesting.png", 
+                "caption": "Hello EveryOne","author":"mememaster","favorite": false,"numberOfLikes":"5","followed":false}];
 
   /**
    * Initialize major event handlers
@@ -31,8 +33,8 @@
     document.querySelector('#following-btn').addEventListener('click', loadFollowingItems);
     document.querySelector('#recommend-btn').addEventListener('click', loadRecommendedItems);
     validateSession();
-   //  onSessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
-    listMemes(mock_recommend_data, "recommend");
+    // onSessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
+    listMemes(mock_recommend_data, "recommend")
     //onSessionInvalid();
   }
 
@@ -431,29 +433,60 @@
    * API end point: [POST]/[DELETE] /history request json data: {
    * user_id: 1111, visited: [a_list_of_business_ids] }
    */
-  function changeFavoriteItem(item_id) {
+  function changeFavoriteItem(meme_id) {
+    console.log("here");
     // check whether this item has been visited or not
-    var li = document.querySelector('#item-' + item_id);
-    var favIcon = document.querySelector('#fav-icon-' + item_id);
-    var favorite = !(li.dataset.favorite === 'true');
-
+    var figure = document.querySelector('#meme-' + meme_id);
+    var favIcon = document.querySelector('#fav-icon-' + meme_id);
+    var favorite = !(figure.dataset.favorite === 'true');
+    
     // request parameters
     var url = './history';
     var req = JSON.stringify({
-      user_id: user_id,
-      favorite: [item_id]
+       meme_id: meme_id
     });
     var method = favorite ? 'POST' : 'DELETE';
-
+    
     ajax(method, url, req,
-      // successful callback
-      function(res) {
-        var result = JSON.parse(res);
-        if (result.status === 'OK' || result.result === 'SUCCESS') {
-          li.dataset.favorite = favorite;
-          favIcon.className = favorite ? 'fa fa-heart' : 'fa fa-heart-o';
-        }
-      });
+        // successful callback
+        function(res) {
+         var result = JSON.parse(res);
+         if (result.status === 'OK' || result.result === 'SUCCESS' || result.numberOFLikes != -1) {
+              figure.dataset.favorite = favorite;
+              favIcon.className = favorite ? 'fa fa-heart' : 'fa fa-heart-o';
+              favIcon.innerHTML = result.numberOfLikes;
+         }
+       });
+    
+
+  }
+  function changeFriendship(author_id){
+      
+      var  author_list= document.querySelectorAll('.' + author_id);
+      var  followed = author_list[0].dataset.followed == 'true';
+    
+        // request parameters
+    var url = './friendship';
+    var req = JSON.stringify({
+       to_user_id: author_id
+    });
+    
+    var method = (!followed) ? 'POST' : 'DELETE';
+    console.log(method);
+    ajax(method, url, req,
+        // successful callback
+        function(res) {
+         var result = JSON.parse(res);
+         if (result.status === 'OK' || result.result === 'SUCCESS') {
+                 for (var i = 0; i < author_list.length; i++) {
+                    var element = author_list[i];
+                    element.dataset.followed = !followed;
+                    element.className = (followed? 'fa fa-user-plus ' :'fas fa-user-friends ') + author_id;
+        
+                  }
+         }
+       });
+     
   }
 
   // -------------------------------------
@@ -507,31 +540,56 @@
     }
   }
   
-  function addMemes(itemList, item, feature) {
+  function addMemes(memeList, meme, feature) {
     // create the <figure> tag and specify the id and class attributes
-    var figure = $create('figure');
+    var meme_id = meme.id;
+    var author_id = meme.author
+    
+    var figure = $create('figure',{
+      id: 'meme-' + meme_id,
+      className: 'meme'
+    });
+    
+    figure.dataset.author = author_id;
+    figure.dataset.meme_id = meme_id;
+    figure.dataset.favorite = meme.favorite;
 
     // item image
-    if (item.url) {
-      figure.appendChild($create('img', {src: item.url}));
+    if (meme.url) {
+      figure.appendChild($create('img', {src: meme.url}));
     } else {
       figure.appendChild($create('img', {
         src: 'https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png'
       }));
     }
-   
+    
+    // follow user link
+    var followUserLink = $create('i', {
+      className: meme.followed ? 'fas fa-user-friends '+ author_id : 'fa fa-user-plus '+ author_id
+    });
+    followUserLink.dataset.followed= meme.followed;
+    followUserLink.onclick = function(){changeFriendship(author_id)};
+
+    //favorite link
+    var favLink = $create('i', {
+      id: 'fav-icon-' + meme_id,
+      className: meme.favorite ? 'fa fa-heart' : 'fa fa-heart-o'
+    });
+    favLink.innerHTML = meme.numberOfLikes;
+    favLink.onclick = function(){changeFavoriteItem(meme_id)};
+    
     //figure
     var author = $create('figcaption');
-    author.innerHTML = '<i class="fa fa-user"></i>'+ item.author
-    if(feature == "recommend"){author.innerHTML += '<i class="fa fa-user-plus add-user"> </i>';}
+    author.innerHTML = '<i class="fa fa-user"></i>'+ meme.author
+    if(feature == "recommend"){author.appendChild(followUserLink);}
     var figcaption = $create('figcaption');
-    figcaption.innerHTML = item.caption;
-    if (feature != "create"){figcaption.innerHTML += '<i class="fa fa-heart fav">10</i>';}
+    figcaption.innerHTML = meme.caption;
+    if (feature != "create"){figcaption.appendChild(favLink);}
     figure.appendChild(author);
     figure.appendChild(figcaption);
     
     
-    itemList.appendChild(figure);
+    memeList.appendChild(figure);
   }
    
   function createMemes(information){

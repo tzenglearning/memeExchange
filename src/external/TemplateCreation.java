@@ -73,7 +73,7 @@ public class TemplateCreation {
 	        JSONArray jsonObjectArray = new JSONArray(response.toString());
 	        
 
-	        for(int i = 0; i < 1; i++) {
+	        for(int i = 0; i <jsonObjectArray.length(); i++) {
 
 	        	//construct url
 	        	String link = jsonObjectArray.getJSONObject(i).getString("template");
@@ -106,14 +106,14 @@ public class TemplateCreation {
 				sqlConn.insertTemplate(objectName);
 				System.out.println(objectName + " inserted into sql");
 				
-//			    //save to gcp
-				Storage storage = StorageOptions.newBuilder().setProjectId(GCPUtil.projectId).build().getService();
-			    BlobId blobId = BlobId.of(GCPUtil.bucketName, objectName+".png");
-			    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-			    Blob blob = storage.create(blobInfo, image);
-			    
-			    System.out.println(objectName + " uploaded to gcp");
-				
+////			    //save to gcp
+//				Storage storage = StorageOptions.newBuilder().setProjectId(GCPUtil.projectId).build().getService();
+//			    BlobId blobId = BlobId.of(GCPUtil.bucketName, objectName+".png");
+//			    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+//			    Blob blob = storage.create(blobInfo, image);
+//			    
+//			    System.out.println(objectName + " uploaded to gcp");
+//				
 	        }
 
 		} catch (Exception e) {

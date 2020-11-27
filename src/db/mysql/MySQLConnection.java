@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Set;
 
 import db.DBConnection;
+import entity.Meme;
+import entity.Meme.MemeBuilder;
 //import entity.Item;
 //import entity.Item.ItemBuilder;
 //import external.TicketMasterAPI;
@@ -81,26 +83,6 @@ public class MySQLConnection implements DBConnection {
 			e.printStackTrace();
 		}
 		return "";
-	}
-	@Override
-	public void setFavoriteItems(String userId, List<String> itemIds) {
-		// TODO Auto-generated method stub
-        if (conn == null) {
-            System.err.println("DB connection failed");
-            return;
-        }
-
-		try {
-			String sql = "INSERT IGNORE INTO history(user_id, item_id) VALUES (?, ?)";
-			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.setString(1, userId);
-			for (String itemId : itemIds) {
-				ps.setString(2, itemId);
-				ps.execute();
-			}
-		} catch (Exception e) {
-		    e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -204,26 +186,55 @@ public class MySQLConnection implements DBConnection {
 	}
 	
     @Override
-	public boolean followUser(String fromUserId, String toUserId){
+	public void followUser(String fromUserId, String toUserId){
+		if(conn == null) {
+			System.err.println("DB Connection Failed");
+			return;
+		}
+
+		try {
+			String sql = "INSERT IGNORE INTO Relationships (FromUserId, ToUserId) VALUES (?,?)";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1,fromUserId);
+			ps.setString(2,toUserId);
+			
+			return;
+			
+		} catch (SQLException e) {
+		    System.out.println(e.getMessage());	
+		}
+		
+		return;
+	}
+    
+    @Override 
+    public boolean followedUser(String fromUserId, String toUserId) {
 		if(conn == null) {
 			System.err.println("DB Connection Failed");
 			return false;
 		}
 
 		try {
-			String sql = "INSERT IGNORE INTO Relationships (from_user_id, to_user_id) VALUES (?,?)";
-			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.setString(1,fromUserId);
-			ps.setString(2,toUserId);
+			String sql = "SELECT COUNT(*) from Relationships WHERE FromUserId =  ? AND ToUserId = ?";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1,fromUserId);
+			statement.setString(2,toUserId);
 			
-			return ps.executeUpdate() == 1;
+			ResultSet rs = statement.executeQuery();
+			int num = 0;
+			
+			while(rs.next()) {
+				num = rs.getInt("COUNT(*)");
+			}
+			return num == 1;
 			
 		} catch (SQLException e) {
 		    System.out.println(e.getMessage());	
 		}
 		
-		return true;
-	}
+		return false;
+    	
+    }
     
     @Override
     public boolean searchUser(String userId) {
@@ -233,11 +244,15 @@ public class MySQLConnection implements DBConnection {
 		}		
 		String name = "";
 		try {
-			String sql = "SELECT user_id FROM Users WHERE user_id = ? ";
+			String sql = "SELECT COUNT(*) FROM Users WHERE user_id = ?";
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setString(1, userId);
 			ResultSet rs = statement.executeQuery();
-            return rs == null;
+			int num = 0;
+			while(rs.next()) {
+			    num = rs.getInt("COUNT(*)");
+			}
+            return num == 1;
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -264,7 +279,7 @@ public class MySQLConnection implements DBConnection {
 		}
 
 		try {
-			String sql = "DELETE FROM Relationships WHERE from_user_id = ? AND to_user_id = ?";
+			String sql = "DELETE FROM Relationships WHERE FromUserId = ? AND ToUserId = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1,fromUserId);
 			ps.setString(2,toUserId);
@@ -325,6 +340,146 @@ public class MySQLConnection implements DBConnection {
 
     	
     }
+    
+	@Override
+	public void likeMeme(String userId, String memeId) {
+		// TODO Auto-generated method stub
+        if (conn == null) {
+            System.err.println("DB connection failed");
+            return;
+        }
+
+		try {
+			String sql = "INSERT IGNORE INTO History(user_id, meme_id) VALUES (?, ?)";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, userId);
+			ps.setString(2, memeId);
+			ps.execute();
+			return;
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
+
+	}
+   
+	@Override
+	public boolean likedMeme(String userId, int memeId) {
+        if (conn == null) {
+            System.err.println("DB connection failed");
+            return false;
+        }
+
+		try {
+        	String sql = "SELECT COUNT(*) FROM History WHERE user_id = ? AND meme_id = ?";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, userId);
+			statement.setInt(2, memeId);
+
+			ResultSet rs = statement.executeQuery();
+			int num = 0;
+			
+			while(rs.next()) {
+				num = rs.getInt("COUNT(*)");
+			}
+			return num == 1;
+			
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
+		return false;
+	}
+	
+	@Override
+	public void unlikeMeme(String userId, String memeId) {
+		// TODO Auto-generated method stub
+        if (conn == null) {
+        	System.err.println("DB connection failed");
+        	return;
+        }
+
+        try {
+        	String sql = "DELETE FROM History WHERE user_id = ? AND meme_id = ?";
+        	PreparedStatement ps = conn.prepareStatement(sql);
+        	ps.setString(1, userId);
+        	ps.setString(2, memeId);
+        	ps.execute();
+            return;
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+
+	}
+    
+    @Override
+	public int getNumberOfLikes(String memeId) {
+        if (conn == null) {
+        	System.err.println("DB connection failed");
+        	return -1;
+        }
+
+        try {
+        	String sql = "SELECT COUNT(*) FROM History WHERE meme_id = ?";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, memeId);
+
+			ResultSet rs = statement.executeQuery();
+			int num = 0;
+			while(rs.next()) {
+				num = rs.getInt("COUNT(*)");
+			}
+			return num;
+            
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+		return -1;
+    	
+		
+	}
+
+	@Override
+	public void setFavoriteItems(String userId, List<String> itemIds) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public Set<Meme> getFeeds(String userId){
+		
+    	if (conn == null) {
+    		System.err.println("DB Connection Failed");
+			return new HashSet<>();
+		}		
+		Set<Meme> set = new HashSet<>(); 
+		
+		try {
+			
+			String sql = "SELECT * FROM Feeds INNER JOIN Memes ON Feeds.meme_id = Memes.id WHERE subscriber_id = ?";
+			
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, userId);
+			ResultSet rs = statement.executeQuery();
+
+			
+            while(rs.next()) {
+    			MemeBuilder builder = new MemeBuilder();
+            	builder.setId(rs.getInt("meme_id"));
+            	builder.setImageUrl(rs.getString("image_url"));
+            	builder.setCaption(rs.getString("caption"));
+            	builder.setAuthor(rs.getString("user_id"));
+            	builder.setCategory(rs.getString("category"));
+            	builder.setTime(rs.getTimestamp("CreatedDateTime"));
+            	
+            	set.add(builder.build());
+            	
+            }
+            return set;
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return new HashSet<>();
+		
+	}
 
     
 

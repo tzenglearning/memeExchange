@@ -8,15 +8,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Meme {
-	private String id;
+	private int id;
 	private String userId;
 	private String templateId;
 	private String category;
 	private String caption;
 	private String imageUrl;
+	private String author;
+	private boolean favorite;
+	private boolean followed;
+	
 	private Date createdDateTime;
 	
-	public String getId() {
+	public int getId() {
 		return id;
 	};
 	
@@ -39,10 +43,23 @@ public class Meme {
 	public Date getTime() {
 		return createdDateTime;
 	};
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public boolean isFavorite() {
+		return favorite;
+	}
+
+	public boolean isFollowed() {
+		return followed;
+	}
 	
 	public JSONObject toJSONObject() {
 		JSONObject obj = new JSONObject();
 		try {
+			
 			obj.put("id", id);
 			obj.put("userId", userId);
 			obj.put("templateId", templateId);
@@ -50,6 +67,10 @@ public class Meme {
 			obj.put("caption", caption);
 			obj.put("image_url", imageUrl);
 			obj.put("createdDateTime", createdDateTime);
+			obj.put("author", author);
+			obj.put("favorite", favorite);
+			obj.put("followed", followed)
+			;
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -67,20 +88,26 @@ public class Meme {
 		this.caption = builder.caption;
 		this.imageUrl = builder.imageUrl;
 		this.createdDateTime = builder.createdDateTime;
+		this.author = builder.author;
+		this.favorite = builder.favorite;
+		this.followed = builder.followed;
 	
 	}
-	
+
 	public static class MemeBuilder {
-		private String id;
+		private int id;
 		private String userId;
 		private String templateId;
 		private String category;
 		private String caption;
 		private String imageUrl;
 		private Date createdDateTime;
+		private String author;
+		private boolean favorite;
+		private boolean followed;
 		
-		public void setId(String Id) {
-			this.id = Id;
+		public void setId(int id) {
+			this.id = id;
 		}
 
 		public void setUserId(String userId) {
@@ -105,6 +132,18 @@ public class Meme {
 
 		public void setTime(Date createdDateTime) {
 			this.createdDateTime = createdDateTime;
+		}
+		
+		public void setAuthor(String author) {
+			this.author = author;
+		}
+		
+		public void setFavorite(Boolean favorite) {
+			this.favorite = favorite;
+		}
+		
+		public void setFollowed(Boolean followed) {
+			this.followed = followed;
 		}
 
 		public Meme build() {
