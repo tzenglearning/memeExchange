@@ -1,6 +1,8 @@
 rpc/SearchTemplates.class
+rpc/ItemHistory.class
 external/GCPUtil.class
 db/mysql/MySQLTableCreation.class
+rpc/GetFeeds.class
 db/DBConnectionFactory.class
 external/MemeGenerateAPI.class
 rpc/CreateMeme.class

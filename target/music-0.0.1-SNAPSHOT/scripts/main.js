@@ -8,14 +8,11 @@
   var lng = -122.08;
   var lat = 37.38;
   
-  var mock_recommend_data = [{"url": "//storage.googleapis.com/meme_generator/mememasterCS701.png", 
-                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/blb.png", 
-                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/boat.png", 
-                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/sohappy.png", 
-                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/fine.png", 
-                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/hipster.png", 
-                "caption": "Hello EveryOne","author":"Ray"},{"url": "//storage.googleapis.com/meme_generator/interesting.png", 
-                "caption": "Hello EveryOne","author":"Ray"}]
+  var mock_recommend_data = [{"id": 1, "image_url": "//storage.googleapis.com/meme_generator/mememasterCS701.png", 
+                "caption": "Hello EveryOne","userId":"mememaster", "favorite": true, "numberOfLikes":"5", "follow":false},{
+"id": 2, "image_url": "//storage.googleapis.com/meme_generator/blb.png", 
+                "caption": "Hello EveryOne","userId":"Ray","favorite": false,"numberOfLikes":"5","follow":false},{"id": 3, "image_url": "//storage.googleapis.com/meme_generator/boat.png", 
+                "caption": "Hello EveryOne","userId":"mememaster","favorite": false,"numberOfLikes":"5","follow":false}];
 
   /**
    * Initialize major event handlers
@@ -30,9 +27,10 @@
     document.querySelector('#register-btn').addEventListener('click', register);
     document.querySelector('#following-btn').addEventListener('click', loadFollowingItems);
     document.querySelector('#recommend-btn').addEventListener('click', loadRecommendedItems);
+    document.querySelector('#avatar').addEventListener('click', loadProfile);
     validateSession();
-   //  onSessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
-    listMemes(mock_recommend_data, "recommend");
+    //onSessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
+    listMemes(mock_recommend_data, "recommend")
     //onSessionInvalid();
   }
 
@@ -67,6 +65,8 @@
     var loginForm = document.querySelector('#login-form');
     var registerForm = document.querySelector('#register-form');
     var memes = document.querySelector('#memes');
+    var profileContainer = document.querySelector("#profileContainer");
+    var templates = document.querySelector('#templates');
     var avatar = document.querySelector('#avatar');
     var welcomeMsg = document.querySelector('#welcome-msg');
     var logoutBtn = document.querySelector('#logout-link');
@@ -100,7 +100,11 @@
   }
 
   function hideElement(element) {
-    element.style.display = 'none';
+    if(element != null){
+      element.style.display = 'none';
+    } else {
+      console.log("element is null");
+    }
   }
 
   function showElement(element, style) {
@@ -163,7 +167,7 @@
   function showLoginError() {
     document.querySelector('#login-error').innerHTML = 'Invalid username or password';
   }
-
+  
   function clearLoginError() {
     document.querySelector('#login-error').innerHTML = '';
   }
@@ -180,12 +184,12 @@
     
     if (username === "" || password == "" || firstName === "" || lastName === "") {
     	showRegisterResult('Please fill in all fields');
-    	return
+    	return;
     }
     
     if (username.match(/^[a-z0-9_]+$/) === null) {
     	showRegisterResult('Invalid username');
-    	return
+    	return;
     }
     
     password = md5(username + md5(password));
@@ -226,7 +230,6 @@
   function clearRegisterResult() {
     document.querySelector('#register-result').innerHTML = '';
   }
-
 
   // -----------------------------------
   // Helper Functions
@@ -295,9 +298,7 @@
    */
   function ajax(method, url, data, successCallback, errorCallback) {
     var xhr = new XMLHttpRequest();
-
     xhr.open(method, url, true);
-
     xhr.onload = function() {
       if (xhr.status === 200) {
         successCallback(xhr.responseText);
@@ -322,7 +323,7 @@
 
   // -------------------------------------
   // AJAX call server-side APIs
-  // -------------------------------------
+  // ------------------------------------- 
 
   /**
    * API #1 Load the templates API end point: [GET]
@@ -330,6 +331,7 @@
    */
   function loadTemplates() {
     console.log('loadTemplates');
+    showElement(memes);
     //activeBtn('create-btn');
 
     // // The request parameters
@@ -355,48 +357,122 @@
     //     showErrorMessage('Cannot load templates.');
     //   }
     // );
-    listTemplates(["//storage.googleapis.com/meme_generator/buzz.png","//storage.googleapis.com/meme_generator/buzz.png"])
-      document.querySelector('#create').addEventListener('click', createMemes);
+    simpleListTemplates(["//storage.googleapis.com/meme_generator/buzz.png", "//storage.googleapis.com/meme_generator/boat.png","//storage.googleapis.com/meme_generator/buzz.png"  ])
   }
 
   /**
-   * API #2 Load favorite (or visited) items API end point: [GET]
-   * /history?user_id=1111
+   * API #2 Load feeds API end point: [GET]
+   * /feed
    */
   function loadFollowingItems() {
-    activeBtn('following-btn');
     console.log("Load Following Items");
     // request parameters
-    var url = './follow';
-    var params = 'user_id=' + user_id;
+    var url = './feed';
+    var params = '';
     var req = JSON.stringify({});
 
     // display loading message
     //showLoadingMessage('Loading Following items...');
 
     // make AJAX call
-  //   ajax('GET', url + '?' + params, req, function(res) {
-  //     var items = JSON.parse(res);
-  //     if (!items || items.length === 0) {
-  //       showWarningMessage('No favorite item.');
-  //     } else {
-  //       listMemes(items);
-  //     }
-  //   }, function() {
-  //     showErrorMessage('Cannot load Following items.');
-  //   });
-  // }
-    listMemes([{"url": "//storage.googleapis.com/meme_generator/afraid.png", 
-                 "caption": "Hello World", "author": "Charlie"}], "following")
- }
-              
+     ajax('GET', url + '?' + params, req, function(res) {
+       var items = JSON.parse(res);
+       if (!items || items.length === 0) {
+         showWarningMessage('No favorite item.');
+       } else {
+         listMemes(items, 'recommend');
+       }
+     }, function() {
+       showErrorMessage('Cannot load Following items.');
+     });
+   }
+
+  // -------------------------------------
+  // Profile page frontend
+  // ------------------------------------- 
+  /*
+  Calls the relevant functions to display the profile page:
+    populateProfileHeader
+    listProfileMems
+  */ 
+  function loadProfile() {
+    activeBtn('avatar');
+    console.log("profile");
+    populateProfileHeader();
+    listProfileMemes(); 
+  }
+  
+  function populateProfileHeader() { 
+    profileContainer.innerHTML = '';
+    showElement(profileContainer);
+    var profile = $create('div', {});
+    profile.setAttribute("class", "profile");
+    
+    populateProfileImage(profile);
+    populateProfileUserSettings(profile);
+    
+    profileContainer.appendChild(profile);
+  }
+  
+  function populateProfileImage(profile) {
+    var profileImage = $create('div', {});
+    profileImage.setAttribute("class", "profile-image");
+    var image = $create('img', {src: "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-grey-photo-placeholder-illustrations-vectors-default-avatar-profile-icon-grey-photo-placeholder-99724602.jpg"}); //hardcode
+    profileImage.appendChild(image);
+    profile.appendChild(profileImage);
+  }
+  
+  function populateProfileUserSettings(profile) {
+    var profileUserSettings = $create('div', {});
+    profileUserSettings.setAttribute("class", "profile-user-settings");
+    var profileUserName = $create('h1', {});
+    profileUserName.setAttribute("class", "profile-user-name");
+    
+    let userName = "Charlieferguson";
+    profileUserName.textContent += '@' + userName;
+    profileUserSettings.appendChild(profileUserName);
+    profile.appendChild(profileUserSettings);
+  }
+  
+  function populateMemesOnProfile() {
+    showElement(memes);
+    
+    var images = document.querySelector('#memes');
+    images.innerHTML = '';
+     listMemes(mock_recommend_data, "create");
+    
+  }
+  
+  function listProfileMemes() { 
+    prepProfilePage();
+    populateMemesOnProfile();
+  }
+  
+  /* prepProfilePage():
+   * clears all elements (except for the header) off of the page 
+   * for a clean slate. 
+   */
+  function prepProfilePage() {
+    var tmps = document.querySelectorAll('templates');
+    for(var i = 0; i < tmps.length; i++) {
+      hideElement(tmps[i]);
+    }
+}
+  
   /**
    * API #3 Load recommended items API end point: [GET]
    * /recommendation?user_id=1111
    */
   function loadRecommendedItems() {
     activeBtn('recommend-btn');
-    console.log("Load Recommend Items")
+    showElement(memes);
+    hideElement(profileContainer);
+    var tmps = document.querySelectorAll('templates');
+    for(var i = 0; i < tmps.length; i++) {
+      hideElement(tmps[i]);
+    }
+    console.log("Load Recommend Items");
+    /*
     // request parameters
     //var url = './recommendation' + '?' + 'user_id=' + user_id + '&lat=' + lat + '&lon=' + lng;
     //var data = null;
@@ -420,7 +496,8 @@
     //     showErrorMessage('Cannot load recommended items.');
     //   }
     // );
-    listMemes(mock_recommend_data, "recommend")
+    */
+    listMemes(mock_recommend_data, "recommend");
   }
 
   /**
@@ -431,50 +508,155 @@
    * API end point: [POST]/[DELETE] /history request json data: {
    * user_id: 1111, visited: [a_list_of_business_ids] }
    */
-  function changeFavoriteItem(item_id) {
+  function changeFavoriteItem(meme_id) {
+    console.log("here");
     // check whether this item has been visited or not
-    var li = document.querySelector('#item-' + item_id);
-    var favIcon = document.querySelector('#fav-icon-' + item_id);
-    var favorite = !(li.dataset.favorite === 'true');
-
+    var figure = document.querySelector('#meme-' + meme_id);
+    var favIcon = document.querySelector('#fav-icon-' + meme_id);
+    var favorite = !(figure.dataset.favorite === 'true');
+    
     // request parameters
     var url = './history';
     var req = JSON.stringify({
-      user_id: user_id,
-      favorite: [item_id]
+       meme_id: meme_id
     });
     var method = favorite ? 'POST' : 'DELETE';
-
+    
     ajax(method, url, req,
-      // successful callback
-      function(res) {
-        var result = JSON.parse(res);
-        if (result.status === 'OK' || result.result === 'SUCCESS') {
-          li.dataset.favorite = favorite;
-          favIcon.className = favorite ? 'fa fa-heart' : 'fa fa-heart-o';
-        }
-      });
+        // successful callback
+        function(res) {
+         var result = JSON.parse(res);
+         if (result.status === 'OK' || result.result === 'SUCCESS' || result.numberOFLikes != -1) {
+              figure.dataset.favorite = favorite;
+              favIcon.className = favorite ? 'fa fa-heart' : 'fa fa-heart-o';
+              favIcon.innerHTML = result.numberOfLikes;
+         }
+       });
+    
+
+  }
+  function changeFriendship(author_id){
+      
+      var  author_list= document.querySelectorAll('.' + author_id);
+      var  followed = author_list[0].dataset.followed == 'true';
+    
+        // request parameters
+    var url = './friendship';
+    var req = JSON.stringify({
+       to_user_id: author_id
+    });
+    
+    var method = (!followed) ? 'POST' : 'DELETE';
+    console.log(method);
+    ajax(method, url, req,
+        // successful callback
+        function(res) {
+         var result = JSON.parse(res);
+         if (result.status === 'OK' || result.result === 'SUCCESS') {
+                 for (var i = 0; i < author_list.length; i++) {
+                    var element = author_list[i];
+                    element.dataset.followed = !followed;
+                    element.className = (followed? 'fa fa-user-plus ' :'fas fa-user-friends ') + author_id;
+        
+                  }
+         }
+       });
+     
   }
 
   // -------------------------------------
   // Create item list
   // -------------------------------------
 
+  /*
+  Adds the template images as figures to the document
+  TODO: I need to refactor this for clarity...
+  */
+  function simpleListTemplates(templates) { 
+    var memes = document.querySelector('#memes');
+    hideElement(memes);
+    hideElement(profileContainer);
+
+
+    var images = document.querySelector('#templates');
+    images.innerHTML = '';
+    var container = $create('div', {id: "templates"});
+    container.setAttribute('class', 'templateDisplay');
+    var row = $create('div', {});
+    row.setAttribute("class", "row");
+    for (var i = 0; i < templates.length; i++) {
+      let column = $create('div', {});
+      column.setAttribute("class", "column");
+      let id = "fig" + i.toString(10);
+      var template = $create('templates', {id: id});
+      
+      if(templates[i]) { 
+        console.log('creating simple template');
+        var img = $create('img', {src: templates[i]});
+        img.setAttribute("class", "img");
+        template.appendChild(img);
+        column.appendChild(template)
+        row.appendChild(column);
+      } else {
+        console.log("No image");
+        figure.appendChild($create('img', {
+        src: 'https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png'
+        }));
+      }
+      container.appendChild(row);
+      images.appendChild(container);
+    }
+       let matches = images.querySelectorAll("div.row > div.column > templates");
+      for(var i = 0; i < matches.length; i++) {
+          matches[i].addEventListener('click', function() {displayTemplate(this, matches)});
+      }
+  }
+  
+  function displayTemplate(tmp, matches) { 
+    console.log("displayTemplate");
+    var src;
+    for(var i = 0; i < matches.length; i++) {
+      console.log(matches[i]);
+      if(matches[i].id == tmp.id) {
+        src = matches[i].querySelector(".img").src;
+        hideElement(matches[i]);
+        displayCreate(src);
+      } else {
+        hideElement(matches[i]);
+      }
+    } 
+  }
+  
+  /*
+    I need to make this img be put into a container that will allow me to remove it anytime there is a new page being loaded
+  */
+  function displayCreate(img) {
+    var figure = $create('img', {src: img});
+    var template = $create('templates', {});
+    
+    var templateContainer = document.querySelector('#templates');
+    templateContainer.innerHTML = '';
+    figure.setAttribute("class", "templates large");
+    template.appendChild(figure);
+    template.innerHTML = template.innerHTML + '<div> <input type ="text" placeholder ="upText" id = "upText" ></input> <input type ="text" placeholder = "downText" id = "downText" ></input><input type ="text" placeholder = "category" id = "category" ></input><input type ="text" placeholder = "caption" id = "caption" ></input><input type="submit" id = "create" value = "Create"></input> </div>';
+    templateContainer.appendChild(template);
+  }
   /**
    * List recommendation items base on the data received
-   *
+   
    * @param items - An array of item JSON objects
    */
+  
   function listTemplates(items) {
+    showElement(memes);
     var images = document.querySelector('#memes');
     images.innerHTML = '';
-    //to be developed
-    //images.innerHTML = $create('div'); // clear current results
+    var ids =  [];
     for (var i = 0; i < items.length; i++) {
-       addTemplate(images, items[i]);
+      let id = "img" + i.toString(10);
+      addTemplate(images, items[i], id);
+      ids.push(id);
     }
-    images.innerHTML =  images.innerHTML + '<div> <input type ="text" placeholder ="upText" id = "upText" ></input> <input type ="text" placeholder = "downText" id = "downText" ></input><input type ="text" placeholder = "category" id = "category" ></input><input type ="text" placeholder = "caption" id = "caption" ></input><input type="submit" id = "create" value = "Create"></input> </div>';
-    
   }
 
   /**
@@ -489,13 +671,25 @@
 	    <figcaption>Computer Science memes</figcaption>
 	</figure>
    */
-  function addTemplate(itemList, item) {
+  function addTemplate(itemList, item, id) {
     // create the <figure> tag and specify the id and class attributes
+    var figure = $create('figure', {id: id});
+    figure.setAttribute("class", "figure2");
     // item image
-    var img = $create('img', {src: item});
-    img.setAttribute("class", "templates");
-    itemList.appendChild(img);
+    if (item) {
+      var img = $create('img', {src: item});
+      figure.appendChild(img);
+    } else {
+      figure.appendChild($create('img', {
+        src: 'https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png'
+      }));
+    }
+    itemList.appendChild(figure);
   }
+  
+  // ***********************
+  // Listing memes on recomended (maybe following) page(s)
+  // ***********************
   
   function listMemes(items, feature) {
     var images = document.querySelector('#memes');
@@ -507,31 +701,61 @@
     }
   }
   
-  function addMemes(itemList, item, feature) {
+  function addMemes(memeList, meme, feature) {
     // create the <figure> tag and specify the id and class attributes
-    var figure = $create('figure');
+    var meme_id = meme.id;
+    var caption = meme.caption;
+    var author_id = meme.userId;
+    var image_url = meme.image_url;
+    var follow = meme.follow;
+    var favorite = meme.favorite;
+    var numberOfLikes = meme.numberOfLikes;
+    
+    var figure = $create('figure',{
+      id: 'meme-' + meme_id,
+      className: 'meme'
+    });
+    
+    figure.dataset.author = author_id;
+    figure.dataset.meme_id = meme_id;
+    figure.dataset.favorite = meme.favorite;
 
     // item image
-    if (item.url) {
-      figure.appendChild($create('img', {src: item.url}));
+    if (image_url) {
+      figure.appendChild($create('img', {src: image_url}));
     } else {
       figure.appendChild($create('img', {
         src: 'https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png'
       }));
     }
-   
+    
+    // follow user link
+    var followUserLink = $create('i', {
+      className: follow ? 'fas fa-user-friends '+ author_id : 'fa fa-user-plus '+ author_id
+    });
+    followUserLink.dataset.followed= follow;
+    followUserLink.onclick = function(){changeFriendship(author_id)};
+
+    //favorite link
+    var favLink = $create('i', {
+      id: 'fav-icon-' + meme_id,
+      className: favorite ? 'fa fa-heart' : 'fa fa-heart-o'
+    });
+    favLink.innerHTML = numberOfLikes;
+    favLink.onclick = function(){changeFavoriteItem(meme_id)};
+    
     //figure
     var author = $create('figcaption');
-    author.innerHTML = '<i class="fa fa-user"></i>'+ item.author
-    if(feature == "recommend"){author.innerHTML += '<i class="fa fa-user-plus add-user"> </i>';}
+    author.innerHTML = '<i class="fa fa-user"></i>'+ author_id;
+    if(feature == "recommend"){author.appendChild(followUserLink);}
     var figcaption = $create('figcaption');
-    figcaption.innerHTML = item.caption;
-    if (feature != "create"){figcaption.innerHTML += '<i class="fa fa-heart fav">10</i>';}
+    figcaption.innerHTML = caption;
+    if (feature != "create"){figcaption.appendChild(favLink);}
     figure.appendChild(author);
     figure.appendChild(figcaption);
     
     
-    itemList.appendChild(figure);
+    memeList.appendChild(figure);
   }
    
   function createMemes(information){
@@ -565,3 +789,4 @@
   init();
 
 })();
+

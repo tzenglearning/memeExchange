@@ -8,16 +8,11 @@
   var lng = -122.08;
   var lat = 37.38;
   
-  var mock_recommend_data = [{"id": "1", "url": "//storage.googleapis.com/meme_generator/mememasterCS701.png", 
-                "caption": "Hello EveryOne","author":"mememaster", "favorite": true, "numberOfLikes":"5", "followed":false},{
-"id": "2", "url": "//storage.googleapis.com/meme_generator/blb.png", 
-                "caption": "Hello EveryOne","author":"Ray","favorite": false,"numberOfLikes":"5","followed":false},{"id": "3", "url": "//storage.googleapis.com/meme_generator/boat.png", 
-                "caption": "Hello EveryOne","author":"mememaster","favorite": false,"numberOfLikes":"5","followed":false},{"id": "4", "url": "//storage.googleapis.com/meme_generator/boat.png", 
-                "caption": "Hello EveryOne","author":"mememaster","favorite": false,"numberOfLikes":"5","followed":false},{"id": "5", "url": "//storage.googleapis.com/meme_generator/sohappy.png", 
-                "caption": "Hello EveryOne","author":"mememaster","favorite": false,"numberOfLikes":"5","followed":false},{"id":"6", "url": "//storage.googleapis.com/meme_generator/fine.png", 
-                "caption": "Hello EveryOne","author":"mememaster","favorite": false,"numberOfLikes":"5","followed":false},{"id":"7", "url": "//storage.googleapis.com/meme_generator/hipster.png", 
-                "caption": "Hello EveryOne","author":"mememaster","favorite": false,"numberOfLikes":"5","followed":false},{"id": "8", "url": "//storage.googleapis.com/meme_generator/interesting.png", 
-                "caption": "Hello EveryOne","author":"mememaster","favorite": false,"numberOfLikes":"5","followed":false}];
+  var mock_recommend_data = [{"id": 1, "image_url": "//storage.googleapis.com/meme_generator/mememasterCS701.png", 
+                "caption": "Hello EveryOne","userId":"mememaster", "favorite": true, "numberOfLikes":"5", "follow":false},{
+"id": 2, "image_url": "//storage.googleapis.com/meme_generator/blb.png", 
+                "caption": "Hello EveryOne","userId":"Ray","favorite": false,"numberOfLikes":"5","follow":false},{"id": 3, "image_url": "//storage.googleapis.com/meme_generator/boat.png", 
+                "caption": "Hello EveryOne","userId":"mememaster","favorite": false,"numberOfLikes":"5","follow":false}];
 
   /**
    * Initialize major event handlers
@@ -189,12 +184,12 @@
     
     if (username === "" || password == "" || firstName === "" || lastName === "") {
     	showRegisterResult('Please fill in all fields');
-    	return
+    	return;
     }
     
     if (username.match(/^[a-z0-9_]+$/) === null) {
     	showRegisterResult('Invalid username');
-    	return
+    	return;
     }
     
     password = md5(username + md5(password));
@@ -366,34 +361,31 @@
   }
 
   /**
-   * API #2 Load favorite (or visited) items API end point: [GET]
-   * /history?user_id=1111
+   * API #2 Load feeds API end point: [GET]
+   * /feed
    */
   function loadFollowingItems() {
-    activeBtn('following-btn');
     console.log("Load Following Items");
     // request parameters
-    var url = './follow';
-    var params = 'user_id=' + user_id;
+    var url = './feed';
+    var params = '';
     var req = JSON.stringify({});
 
     // display loading message
     //showLoadingMessage('Loading Following items...');
 
     // make AJAX call
-  //   ajax('GET', url + '?' + params, req, function(res) {
-  //     var items = JSON.parse(res);
-  //     if (!items || items.length === 0) {
-  //       showWarningMessage('No favorite item.');
-  //     } else {
-  //       listMemes(items);
-  //     }
-  //   }, function() {
-  //     showErrorMessage('Cannot load Following items.');
-  //   });
-  // }
-
- }
+     ajax('GET', url + '?' + params, req, function(res) {
+       var items = JSON.parse(res);
+       if (!items || items.length === 0) {
+         showWarningMessage('No favorite item.');
+       } else {
+         listMemes(items, 'recommend');
+       }
+     }, function() {
+       showErrorMessage('Cannot load Following items.');
+     });
+   }
 
   // -------------------------------------
   // Profile page frontend
@@ -696,7 +688,7 @@
   }
   
   // ***********************
-  // Listing memes on reccomended (maybe following) page(s)
+  // Listing memes on recomended (maybe following) page(s)
   // ***********************
   
   function listMemes(items, feature) {
@@ -712,7 +704,12 @@
   function addMemes(memeList, meme, feature) {
     // create the <figure> tag and specify the id and class attributes
     var meme_id = meme.id;
-    var author_id = meme.author
+    var caption = meme.caption;
+    var author_id = meme.userId;
+    var image_url = meme.image_url;
+    var follow = meme.follow;
+    var favorite = meme.favorite;
+    var numberOfLikes = meme.numberOfLikes;
     
     var figure = $create('figure',{
       id: 'meme-' + meme_id,
@@ -724,8 +721,8 @@
     figure.dataset.favorite = meme.favorite;
 
     // item image
-    if (meme.url) {
-      figure.appendChild($create('img', {src: meme.url}));
+    if (image_url) {
+      figure.appendChild($create('img', {src: image_url}));
     } else {
       figure.appendChild($create('img', {
         src: 'https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png'
@@ -734,25 +731,25 @@
     
     // follow user link
     var followUserLink = $create('i', {
-      className: meme.followed ? 'fas fa-user-friends '+ author_id : 'fa fa-user-plus '+ author_id
+      className: follow ? 'fas fa-user-friends '+ author_id : 'fa fa-user-plus '+ author_id
     });
-    followUserLink.dataset.followed= meme.followed;
+    followUserLink.dataset.followed= follow;
     followUserLink.onclick = function(){changeFriendship(author_id)};
 
     //favorite link
     var favLink = $create('i', {
       id: 'fav-icon-' + meme_id,
-      className: meme.favorite ? 'fa fa-heart' : 'fa fa-heart-o'
+      className: favorite ? 'fa fa-heart' : 'fa fa-heart-o'
     });
-    favLink.innerHTML = meme.numberOfLikes;
+    favLink.innerHTML = numberOfLikes;
     favLink.onclick = function(){changeFavoriteItem(meme_id)};
     
     //figure
     var author = $create('figcaption');
-    author.innerHTML = '<i class="fa fa-user"></i>'+ meme.author
+    author.innerHTML = '<i class="fa fa-user"></i>'+ author_id;
     if(feature == "recommend"){author.appendChild(followUserLink);}
     var figcaption = $create('figcaption');
-    figcaption.innerHTML = meme.caption;
+    figcaption.innerHTML = caption;
     if (feature != "create"){figcaption.appendChild(favLink);}
     figure.appendChild(author);
     figure.appendChild(figcaption);

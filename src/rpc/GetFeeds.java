@@ -50,16 +50,18 @@ public class GetFeeds extends HttpServlet {
 		}
 		
 		try {
-			String userId = session.getAttribute("user_id").toString();			
+			String userId = session.getAttribute("user_id").toString();	
             Set<Meme> set = connection.getFeeds(userId);  
             
             for(Meme meme : set) {
             	JSONObject obj = meme.toJSONObject();
             	int memeId = obj.getInt("id");
-            	String authorId = obj.getString("user_id");
+            	String authorId = obj.getString("userId");
             	
             	//user liked this meme before?
             	obj.put("favorite", connection.likedMeme(userId, memeId));
+            	//get number of likes
+            	obj.put("numberOfLikes", connection.getNumberOfLikes(memeId));
             	//user followed this author before?
             	obj.put("follow", connection.followedUser(userId, authorId));
             	

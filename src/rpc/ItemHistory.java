@@ -52,7 +52,7 @@ public class ItemHistory extends HttpServlet {
 	  	try {
 	  		 JSONObject input = RpcHelper.readJSONObject(request);
 	  		 String userId = session.getAttribute("user_id").toString();
-	  		 String memeId = input.getString("meme_id");
+	  		 int memeId = input.getInt("meme_id");
 
 	  		 connection.likeMeme(userId, memeId);
 	  		 int likes= connection.getNumberOfLikes(memeId);
@@ -81,7 +81,7 @@ public class ItemHistory extends HttpServlet {
 	  	try {
 	  		 JSONObject input = RpcHelper.readJSONObject(request);
 	  		 String userId = session.getAttribute("user_id").toString();
-	  		 String memeId = input.getString("meme_id");
+	  		 int memeId = input.getInt("meme_id");
 	  		 
 	  		 connection.unlikeMeme(userId, memeId);
 	  		 int likes= connection.getNumberOfLikes(memeId);

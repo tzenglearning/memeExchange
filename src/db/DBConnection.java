@@ -113,13 +113,13 @@ public interface DBConnection {
 	
 	public Set<String> searchUserMemes(String userId);
 	
-	public void likeMeme(String userId, String memeId);
+	public void likeMeme(String userId, int memeId);
 	
 	public boolean likedMeme(String userId, int memeId);
 	
-	public void unlikeMeme(String userId, String memeId);
+	public void unlikeMeme(String userId, int memeId);
 
-	public int getNumberOfLikes(String memeId);
+	public int getNumberOfLikes(int memeId);
 	
 	public Set<Meme> getFeeds(String userId);
 	

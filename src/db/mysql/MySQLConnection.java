@@ -343,7 +343,7 @@ public class MySQLConnection implements DBConnection {
     }
     
 	@Override
-	public void likeMeme(String userId, String memeId) {
+	public void likeMeme(String userId, int memeId) {
 		// TODO Auto-generated method stub
         if (conn == null) {
             System.err.println("DB connection failed");
@@ -354,7 +354,7 @@ public class MySQLConnection implements DBConnection {
 			String sql = "INSERT IGNORE INTO History(user_id, meme_id) VALUES (?, ?)";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, userId);
-			ps.setString(2, memeId);
+			ps.setInt(2, memeId);
 			ps.execute();
 			return;
 		} catch (Exception e) {
@@ -391,7 +391,7 @@ public class MySQLConnection implements DBConnection {
 	}
 	
 	@Override
-	public void unlikeMeme(String userId, String memeId) {
+	public void unlikeMeme(String userId, int memeId) {
 		// TODO Auto-generated method stub
         if (conn == null) {
         	System.err.println("DB connection failed");
@@ -402,7 +402,7 @@ public class MySQLConnection implements DBConnection {
         	String sql = "DELETE FROM History WHERE user_id = ? AND meme_id = ?";
         	PreparedStatement ps = conn.prepareStatement(sql);
         	ps.setString(1, userId);
-        	ps.setString(2, memeId);
+        	ps.setInt(2, memeId);
         	ps.execute();
             return;
         } catch (Exception e) {
@@ -412,7 +412,7 @@ public class MySQLConnection implements DBConnection {
 	}
     
     @Override
-	public int getNumberOfLikes(String memeId) {
+	public int getNumberOfLikes(int memeId) {
         if (conn == null) {
         	System.err.println("DB connection failed");
         	return -1;
@@ -421,7 +421,7 @@ public class MySQLConnection implements DBConnection {
         try {
         	String sql = "SELECT COUNT(*) FROM History WHERE meme_id = ?";
 			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, memeId);
+			statement.setInt(1, memeId);
 
 			ResultSet rs = statement.executeQuery();
 			int num = 0;
@@ -465,9 +465,10 @@ public class MySQLConnection implements DBConnection {
             while(rs.next()) {
     			MemeBuilder builder = new MemeBuilder();
             	builder.setId(rs.getInt("meme_id"));
-            	builder.setImageUrl(rs.getString("image_url"));
+            	String url = rs.getString("image_url");
+            	builder.setImageUrl(url.substring(5,url.length()));
             	builder.setCaption(rs.getString("caption"));
-            	builder.setAuthor(rs.getString("user_id"));
+            	builder.setUserId(rs.getString("user_id"));
             	builder.setCategory(rs.getString("category"));
             	builder.setTime(rs.getTimestamp("CreatedDateTime"));
             	
