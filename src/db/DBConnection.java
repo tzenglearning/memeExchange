@@ -111,7 +111,7 @@ public interface DBConnection {
 	
 	public Integer insertMemes(String userId, String templateId, String category, String caption, String image_url);
 	
-	public Set<String> searchUserMemes(String userId);
+	public Set<Meme> getUserMemes(String userId);
 	
 	public void likeMeme(String userId, int memeId);
 	
@@ -124,6 +124,10 @@ public interface DBConnection {
 	public Set<Meme> getFeeds(String userId);
 	
 	public void insertFeeds(String fromUserId, int memeId);
+
+	public int getNumberOfFollowers(String userId);
+	
+	public int getNumberOfFollowing(String userId);
 	
 	
 }

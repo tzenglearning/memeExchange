@@ -370,6 +370,8 @@
   function loadFollowingItems() {
     activeBtn('following-btn');
     console.log("Load Following Items");
+    var profileContainer = document.querySelector("#profileContainer");
+    hideElement(profileContainer);
     // request parameters
     var url = './feed';
     var params = '';
@@ -408,10 +410,28 @@
       "memes" : mock_recommend_data,
       "profilePicture" : "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-grey-photo-placeholder-illustrations-vectors-default-avatar-profile-icon-grey-photo-placeholder-99724602.jpg"
     };
-    activeBtn('avatar');
-    console.log("profile");
-    populateProfileHeader(mock_profile_data);
-    listProfileMemes(mock_profile_data); 
+    
+    // request parameters
+    var url = './create';
+    var params = '';
+    var req = JSON.stringify({});
+
+    // make AJAX call
+     ajax('GET', url + '?' + params, req, function(res) {
+       var items = JSON.parse(res);
+       if (!items || items.length == 0) {
+         showWarningMessage('No items.');
+       } else {
+            activeBtn('avatar');
+    		console.log("profile");
+    		populateProfileHeader(items);
+    		listProfileMemes(items); 
+       }
+     }, function() {
+       showErrorMessage('Cannot load Following items.');
+     });
+     
+
   }
   
   /*

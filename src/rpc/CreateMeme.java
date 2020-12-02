@@ -25,6 +25,7 @@ import com.google.cloud.storage.StorageOptions;
 
 import db.DBConnection;
 import db.DBConnectionFactory;
+import entity.Meme;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -56,16 +57,50 @@ public class CreateMeme extends HttpServlet {
 		HttpSession session = request.getSession(false);
 		
 		try {
-			String userId = "mememaster";
-					//session.getAttribute("user_id").toString();
-			Set<String> result = connection.searchUserMemes(userId);
+		    String userId =  session.getAttribute("user_id").toString();
+		    
+		    //get memes the user created
+			Set<Meme> set = connection.getUserMemes(userId);
+			
+			JSONObject result = new JSONObject();
 			JSONArray array = new JSONArray();
-			for(String image_url : result) {
-				JSONObject obj = new JSONObject();
-				obj.put("image_url",image_url);
-				array.put(obj);
-			}
-			RpcHelper.writeJsonArray(response, array);
+			System.out.println(set.size());
+			
+			
+			 for(Meme meme : set) {
+	            	JSONObject obj = meme.toJSONObject();
+	            	int memeId = obj.getInt("id");
+	            	String authorId = obj.getString("userId");
+	            	
+	            	//user liked this meme before?
+	            	obj.put("favorite", connection.likedMeme(userId, memeId));
+	            	//get number of likes
+	            	obj.put("numberOfLikes", connection.getNumberOfLikes(memeId));
+	            	//user followed this author before?
+	            	obj.put("follow", connection.followedUser(userId, authorId));
+	            	
+	    		    array.put(obj);
+	            }
+		 
+			result.put("memes", array);
+			//get user first name last name
+			result.put("author_id", connection.getFullname(userId));
+			
+			//get number of memes users created
+			result.put("numOfMemes", array.length());
+			
+			//get number of followers 
+			result.put("numOfFollowers", connection.getNumberOfFollowers(userId));
+			
+			//get number of people he followed
+			result.put("numOfFollowing", connection.getNumberOfFollowing(userId));
+			
+			result.put("profilePicture", "https://thumbs.dreamstime.com/b/"
+					+ "default-avatar-profile-icon-grey-photo-placeholder-"
+					+ "illustrations-vectors-default-avatar-profile-icon-grey-photo-placeholder-99724602.jpg");
+			
+			
+			RpcHelper.writeJsonObject(response, result);
 			
 		}catch(Exception e) {
 			e.printStackTrace();

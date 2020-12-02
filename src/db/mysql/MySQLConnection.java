@@ -364,27 +364,38 @@ public class MySQLConnection implements DBConnection {
     }
     
     @Override
-    public Set<String> searchUserMemes(String userId) {
+    public Set<Meme> getUserMemes(String userId) {
     	if (conn == null) {
     		System.err.println("DB Connection Failed");
-			return null;
+			return new HashSet<>();
 		}		
-		Set<String> set = new HashSet<>(); 
+    	
+		Set<Meme> set = new HashSet<>(); 
 		try {
 			
-			String sql = "SELECT image_url FROM Memes WHERE user_id = ? ";
+			String sql = "SELECT * FROM Memes WHERE user_id = ? ";
 			
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setString(1, userId);
 			ResultSet rs = statement.executeQuery();
+			
             while(rs.next()) {
-            	set.add(rs.getString("image_url"));
+    			MemeBuilder builder = new MemeBuilder();
+            	builder.setId(rs.getInt("id"));
+            	builder.setImageUrl(rs.getString("image_url"));
+            	builder.setCaption(rs.getString("caption"));
+            	builder.setUserId(rs.getString("user_id"));
+            	builder.setCategory(rs.getString("category"));
+            	builder.setTime(rs.getTimestamp("CreatedDateTime"));
+            	
+            	set.add(builder.build());
+            	
             }
             return set;
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
-		return null;
+		return new HashSet<>();
 
     	
     }
@@ -563,6 +574,57 @@ public class MySQLConnection implements DBConnection {
 		}
 		
 		return;
+	}
+
+	@Override
+	public int getNumberOfFollowers(String userId) {
+		
+        if (conn == null) {
+        	System.err.println("DB connection failed");
+        	return -1;
+        }
+
+        try {
+        	String sql = "SELECT COUNT(*) FROM Relationships WHERE ToUserId = ?";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, userId);
+
+			ResultSet rs = statement.executeQuery();
+			int num = 0;
+			while(rs.next()) {
+				num = rs.getInt("COUNT(*)");
+			}
+			return num;
+            
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+		return -1;
+	}
+
+	@Override
+	public int getNumberOfFollowing(String userId) {
+        if (conn == null) {
+        	System.err.println("DB connection failed");
+        	return -1;
+        }
+
+        try {
+        	String sql = "SELECT COUNT(*) FROM Relationships WHERE FromUserId = ?";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, userId);
+
+			ResultSet rs = statement.executeQuery();
+			int num = 0;
+			while(rs.next()) {
+				num = rs.getInt("COUNT(*)");
+			}
+			return num;
+            
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+		return -1;
 	}
 
     
