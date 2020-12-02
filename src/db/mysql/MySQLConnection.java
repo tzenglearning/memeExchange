@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
+
 import db.DBConnection;
 import entity.Meme;
 import entity.Meme.MemeBuilder;
@@ -63,26 +65,27 @@ public class MySQLConnection implements DBConnection {
 	}
 
 	@Override
-	public String searchTemplate(String templateName) {
+	public Set<String> searchTemplate() {
         if (conn == null) {
             System.err.println("DB connection failed");
+            return new HashSet<>();
         }
         
 		try {
-			String sql = "SELECT image_url FROM Templates WHERE name = ? ";
+			String sql = "SELECT image_url FROM Templates limit 15";
 			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.setString(1, templateName);
 			ResultSet rs= ps.executeQuery();
-			String image_url = "" ;
+			Set<String> set = new HashSet<>();
+
 			while(rs.next()) {
-				image_url = rs.getString("image_url");
+				set.add(rs.getString("image_url"));
 			}
-			return image_url;
+			return set;
 			
 	   }catch(Exception e) {
 			e.printStackTrace();
 		}
-		return "";
+		return new HashSet<String>();
 	}
 
 	@Override
@@ -327,10 +330,10 @@ public class MySQLConnection implements DBConnection {
 	}
     
     @Override
-    public void insertMemes(String userId, String templateId, String category, String caption, String image_url) {
+    public Integer insertMemes(String userId, String templateId, String category, String caption, String image_url) {
         if (conn == null) {
             System.err.println("DB connection failed");
-            return;
+            return null;
         }
         
 		try {
@@ -343,9 +346,21 @@ public class MySQLConnection implements DBConnection {
 			ps.setString(5, image_url);
 			ps.execute();
 			
+			sql = "SELECT id FROM Memes WHERE user_id = ? AND image_url = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, userId);
+			ps.setString(2, image_url);
+			ResultSet rs = ps.executeQuery();
+			int num = 0;
+			while(rs.next()) {
+				num = rs.getInt("id");
+			}
+			
+			return num;
 	   }catch(Exception e) {
 			e.printStackTrace();
 		}
+		return null;
     }
     
     @Override
@@ -497,8 +512,7 @@ public class MySQLConnection implements DBConnection {
             while(rs.next()) {
     			MemeBuilder builder = new MemeBuilder();
             	builder.setId(rs.getInt("meme_id"));
-            	String url = rs.getString("image_url");
-            	builder.setImageUrl(url.substring(5,url.length()));
+            	builder.setImageUrl(rs.getString("image_url"));
             	builder.setCaption(rs.getString("caption"));
             	builder.setUserId(rs.getString("user_id"));
             	builder.setCategory(rs.getString("category"));
@@ -513,6 +527,42 @@ public class MySQLConnection implements DBConnection {
 		}
 		return new HashSet<>();
 		
+	}
+	
+	@Override
+	public void insertFeeds(String toUserId, int memeId) {
+		if(conn == null) {
+			System.err.println("DB Connection Failed");
+			return;
+		}
+
+		try {
+			//query subscribers from relationship table
+			String sql = "SELECT FromUserId FROM Relationships WHERE ToUserId = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, toUserId);
+			ResultSet rs = ps.executeQuery();
+			
+			Set<String> set = new HashSet<>();			
+			while(rs.next()) {
+            	set.add(rs.getString("FromUserId"));      	
+            }
+			
+            for(String fromUserId : set) {
+			//insert the followed users top 5 feed into the feed table
+            	sql = "INSERT IGNORE INTO Feeds (subscriber_id, meme_id) VALUES (?,?)";
+            	ps = conn.prepareStatement(sql);
+            	ps.setString(1,fromUserId);
+            	ps.setInt(2,memeId);
+            	ps.execute();
+            }
+			return;
+			
+		} catch (SQLException e) {
+		    System.out.println(e.getMessage());	
+		}
+		
+		return;
 	}
 
     

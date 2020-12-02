@@ -11,7 +11,7 @@
   var mock_recommend_data = [{"id": "1", "image_url": "//storage.googleapis.com/meme_generator/mememasterCS701.png", 
                 "caption": "Hello EveryOne","userId":"mememaster", "favorite": true, "numberOfLikes":"5", "follow":false},{
 "id": "2", "image_url": "//storage.googleapis.com/meme_generator/blb.png", 
-                "caption": "Hello EveryOne","userId":"Ray","favorite": false,"numberOfLikes":"5","follow":false}];
+                "caption": "Hello EveryOne","userId":"lol","favorite": false,"numberOfLikes":"5","follow":false}];
 
   /**
    * Initialize major event handlers
@@ -299,7 +299,9 @@
     var xhr = new XMLHttpRequest();
     xhr.open(method, url, true);
     xhr.onload = function() {
+      console.log(xhr.status);
       if (xhr.status === 200) {
+        console.log("hi");
         successCallback(xhr.responseText);
       } else {
         errorCallback();
@@ -333,39 +335,32 @@
     showElement(memes);
     //activeBtn('create-btn');
 
-    // // The request parameters
-    // var url = './templates?page=1&var=2';
-    // var data = null;
-
+    // The request parameters
+    var url = './templates';
+    var params = '';
+    var req = JSON.stringify({});
+    
     // display loading message
    // showLoadingMessage('Loading ...');
 
     // make AJAX call
-    // ajax('GET', url,
-    //   // successful callback
-    //   function(res) {
-    //     var items =["storage.googleapis.com/meme_generator/drake"] //JSON.parse(res);
-    //     if (!items || items.length === 0) {
-    //       showWarningMessage('No templates.');
-    //     } else {
-    //       listItems(items);
-    //     }
-    //   },
-    //   // failed callback
-    //   function() {
-    //     showErrorMessage('Cannot load templates.');
-    //   }
-    // );
-    listTemplates([{id: 1, name: "buzz", image_url: "//storage.googleapis.com/meme_generator/buzz.png"},
-                   {id: 2, name: "boat", image_url: "//storage.googleapis.com/meme_generator/boat.png"},
-                   {id: 3, name: "buzz", image_url:"//storage.googleapis.com/meme_generator/buzz.png"}, 
-                   {id: 2, name: "boat", image_url: "//storage.googleapis.com/meme_generator/boat.png"},
-                   {id: 3,  name: "buzz", image_url:"//storage.googleapis.com/meme_generator/buzz.png"}, 
-                   {id: 2, name: "boat", image_url: "//storage.googleapis.com/meme_generator/boat.png"},
-                   {id: 3,  name: "buzz", image_url:"//storage.googleapis.com/meme_generator/buzz.png"},
-                   {id: 2, name: "boat", image_url: "//storage.googleapis.com/meme_generator/boat.png"}, 
-                   {id: 3,  name: "buzz", image_url:"//storage.googleapis.com/meme_generator/buzz.png"}
-  ])
+    ajax('GET', url, req,
+       // successful callback
+       function(res) {
+         var items = JSON.parse(res);
+         console.log(items);
+         if (!items || items.length === 0) {
+           console.log("No templates.");
+           showWarningMessage('No templates.');
+         } else {
+           listTemplates(items);
+         }
+       },
+       // failed callback
+       function() {
+         console.log('Cannot load templates.');
+       }
+     );
   }
 
   /**
@@ -637,12 +632,10 @@
       let column = $create('div', {});
       column.setAttribute("class", "column");
       
-      let id = templates[i].id;
-      let image_url = templates[i].image_url;
-      let name = templates[i].name;
+      let image_url = '//'+templates[i].image_url;
+      let name = image_url.substring(image_url.lastIndexOf('/')+1, image_url.lastIndexOf('.'));
       
-      let template = $create('figure', {id : id, image_url: image_url});
-      template.dataset.id = id;
+      let template = $create('figure', {image_url: image_url});
       template.dataset.name = name;
       
       template.onclick = function(){displayTemplate2(template)};
@@ -803,8 +796,32 @@
       var input = p.children[1].value;
       values[i] = input;
     }
-    console.log(name);
-    console.log(values);
+
+    var templateId = name;
+    var upText = values[0];
+    var downText = values[1];
+    var category = values[2];
+    var caption = values[3];
+
+    var url = './create';
+    var req = JSON.stringify({
+        templateId : templateId, 
+        category : category,
+        caption: caption, 
+        upText: upText, 
+        downText: downText});
+    console.log(req);
+    ajax('POST', url, req,
+      // successful callback
+       function(res) {
+         var result = JSON.parse(res);
+         if (result && result.length > 0) {
+           console.log("hii");
+           hideElement(document.querySelector('#templates'));
+           showElement(document.querySelector('#memes'));
+           listMemes(result, "create")
+         }
+       });
   }
   
   /*
@@ -872,11 +889,15 @@
    */
   
   // ***********************
-  // Listing memes on reccomended (maybe following) page(s)
+  // Listing memes on recomended (maybe following) page(s)
   // ***********************
   
   function listMemes(items, feature) {
     var images = document.querySelector('#memes');
+    console.log("hiiiii");
+    console.log(images);
+    console.log(items);
+    console.log(feature);
     images.innerHTML = '';
     //to be developed
     //images.innerHTML = $create('div'); // clear current results
@@ -894,6 +915,7 @@
     var followed = meme.follow;
     var favorite= meme.favorite;
     var numberOfLikes = meme.numberOfLikes;
+    console.log(memeList);
     
     var figure = $create('figure',{
       id: 'meme-' + meme_id,

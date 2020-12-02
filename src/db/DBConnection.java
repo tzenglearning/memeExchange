@@ -95,7 +95,7 @@ public interface DBConnection {
 
 	public void insertTemplate(String templateName);
 
-	public String searchTemplate(String templateName);
+	public Set<String> searchTemplate();
 	
 	public void followUser(String fromUserId, String toUserId);
 	
@@ -109,7 +109,7 @@ public interface DBConnection {
 	
 	public boolean unFollowUser(String fromUserId, String toUserId);
 	
-	public void insertMemes(String userId, String templateId, String category, String caption, String image_url);
+	public Integer insertMemes(String userId, String templateId, String category, String caption, String image_url);
 	
 	public Set<String> searchUserMemes(String userId);
 	
@@ -122,6 +122,9 @@ public interface DBConnection {
 	public int getNumberOfLikes(int memeId);
 	
 	public Set<Meme> getFeeds(String userId);
+	
+	public void insertFeeds(String fromUserId, int memeId);
+	
 	
 }
 

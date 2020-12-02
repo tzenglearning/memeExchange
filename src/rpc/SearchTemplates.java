@@ -1,6 +1,8 @@
 package rpc;
 
 import java.io.IOException;
+import java.util.Set;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,7 +20,7 @@ import db.mysql.MySQLConnection;
 /**
  * Servlet implementation class SearchItem
  */
-@WebServlet("/searchTemplates")
+@WebServlet("/templates")
 public class SearchTemplates extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -36,22 +38,25 @@ public class SearchTemplates extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 	    
-		//parameter
-		String templateName = request.getParameter("name");
 		//query the database
 		DBConnection conn = DBConnectionFactory.getConnection();
-		String image_url = conn.searchTemplate(templateName);
+		Set<String> set = conn.searchTemplate();
 		
 		
 		JSONArray array = new JSONArray();
 
 		try {
-			array.put(new JSONObject().put("image_url", image_url));
+			for (String image_url : set){
+				
+				JSONObject obj = new JSONObject().put("image_url", image_url);
+				array.put(obj);			
+			}
+			RpcHelper.writeJsonArray(response, array);	
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		
-		RpcHelper.writeJsonArray(response, array);	
+		
 	}
 
 	/**

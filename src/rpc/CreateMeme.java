@@ -114,16 +114,20 @@ public class CreateMeme extends HttpServlet {
 		    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 		    Blob blob = storage.create(blobInfo, image);
 		    
-		    System.out.println(objectName + " uploaded to gcp");
+		    System.out.println(blob.getName() + " uploaded to gcp");
 			
-
-		    String imageUrl = "//storage.googleapis.com/meme_generator/" +objectName;
+            
+		    String imageUrl = "//storage.googleapis.com/meme_generator/" +blob.getName();
 			//store the relevant information in the sql server
-		    connection.insertMemes(userId, templateId, category, caption,
+		    int memeId = connection.insertMemes(userId, templateId, category, caption,
 		    		imageUrl);
 		    
-		    obj.put("status", "OK").put("user_id", userId).put("image_url", imageUrl);
-		    RpcHelper.writeJsonObject(response, obj);
+		    connection.insertFeeds(userId,memeId);
+		    
+		    obj.put("status", "OK").put("userId", userId).put("image_url", imageUrl).put("caption",caption);
+		    JSONArray array = new JSONArray();
+		    array.put(obj);
+		    RpcHelper.writeJsonArray(response, array);
 		    
 		    
 	   }catch(Exception e) {
