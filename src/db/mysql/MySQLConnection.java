@@ -193,12 +193,33 @@ public class MySQLConnection implements DBConnection {
 		}
 
 		try {
+			//update relationship table
 			String sql = "INSERT IGNORE INTO Relationships (FromUserId, ToUserId) VALUES (?,?)";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1,fromUserId);
 			ps.setString(2,toUserId);
 			ps.execute();
 			
+			//select 
+			sql = "SELECT id From Memes WHERE user_id = ? ORDER BY CreatedDateTime limit 5";
+			
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, toUserId);
+			ResultSet rs = ps.executeQuery();
+			
+			Set<Integer> set = new HashSet<>();			
+			while(rs.next()) {
+            	set.add(rs.getInt("id"));      	
+            }
+			
+            for(Integer meme_id : set) {
+			//insert the followed users top 5 feed into the feed table
+            	sql = "INSERT IGNORE INTO Feeds (subscriber_id, meme_id) VALUES (?,?)";
+            	ps = conn.prepareStatement(sql);
+            	ps.setString(1,fromUserId);
+            	ps.setInt(2,meme_id);
+            	ps.execute();
+            }
 			return;
 			
 		} catch (SQLException e) {
@@ -280,12 +301,23 @@ public class MySQLConnection implements DBConnection {
 		}
 
 		try {
+			
+			//update relation table
 			String sql = "DELETE FROM Relationships WHERE FromUserId = ? AND ToUserId = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1,fromUserId);
 			ps.setString(2,toUserId);
 			
-			return ps.executeUpdate() == 1;
+			ps.execute();
+			
+			
+			//insert the followed users top 5 feed into the feed table
+            sql = "DELETE Feeds FROM Feeds INNER JOIN Memes ON Feeds.meme_id = Memes.id where Memes.user_id = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1,toUserId);
+            ps.execute();
+            
+			return true ;
 			
 		} catch (SQLException e) {
 		    System.out.println(e.getMessage());	

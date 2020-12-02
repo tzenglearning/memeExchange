@@ -8,11 +8,10 @@
   var lng = -122.08;
   var lat = 37.38;
   
-  var mock_recommend_data = [{"id": 1, "image_url": "//storage.googleapis.com/meme_generator/mememasterCS701.png", 
+  var mock_recommend_data = [{"id": "1", "image_url": "//storage.googleapis.com/meme_generator/mememasterCS701.png", 
                 "caption": "Hello EveryOne","userId":"mememaster", "favorite": true, "numberOfLikes":"5", "follow":false},{
-"id": 2, "image_url": "//storage.googleapis.com/meme_generator/blb.png", 
-                "caption": "Hello EveryOne","userId":"Ray","favorite": false,"numberOfLikes":"5","follow":false},{"id": 3, "image_url": "//storage.googleapis.com/meme_generator/boat.png", 
-                "caption": "Hello EveryOne","userId":"mememaster","favorite": false,"numberOfLikes":"5","follow":false}];
+"id": "2", "image_url": "//storage.googleapis.com/meme_generator/blb.png", 
+                "caption": "Hello EveryOne","userId":"Ray","favorite": false,"numberOfLikes":"5","follow":false}];
 
   /**
    * Initialize major event handlers
@@ -357,14 +356,24 @@
     //     showErrorMessage('Cannot load templates.');
     //   }
     // );
-    simpleListTemplates(["//storage.googleapis.com/meme_generator/buzz.png", "//storage.googleapis.com/meme_generator/boat.png","//storage.googleapis.com/meme_generator/buzz.png"  ])
+    listTemplates([{id: 1, name: "buzz", image_url: "//storage.googleapis.com/meme_generator/buzz.png"},
+                   {id: 2, name: "boat", image_url: "//storage.googleapis.com/meme_generator/boat.png"},
+                   {id: 3, name: "buzz", image_url:"//storage.googleapis.com/meme_generator/buzz.png"}, 
+                   {id: 2, name: "boat", image_url: "//storage.googleapis.com/meme_generator/boat.png"},
+                   {id: 3,  name: "buzz", image_url:"//storage.googleapis.com/meme_generator/buzz.png"}, 
+                   {id: 2, name: "boat", image_url: "//storage.googleapis.com/meme_generator/boat.png"},
+                   {id: 3,  name: "buzz", image_url:"//storage.googleapis.com/meme_generator/buzz.png"},
+                   {id: 2, name: "boat", image_url: "//storage.googleapis.com/meme_generator/boat.png"}, 
+                   {id: 3,  name: "buzz", image_url:"//storage.googleapis.com/meme_generator/buzz.png"}
+  ])
   }
 
   /**
-   * API #2 Load feeds API end point: [GET]
-   * /feed
+   * API #2 Load favorite (or visited) items API end point: [GET]
+   * /history?user_id=1111
    */
   function loadFollowingItems() {
+    activeBtn('following-btn');
     console.log("Load Following Items");
     // request parameters
     var url = './feed';
@@ -377,15 +386,15 @@
     // make AJAX call
      ajax('GET', url + '?' + params, req, function(res) {
        var items = JSON.parse(res);
-       if (!items || items.length === 0) {
+       if (!items) {
          showWarningMessage('No favorite item.');
        } else {
-         listMemes(items, 'recommend');
+         listMemes(items, "recommend");
        }
      }, function() {
        showErrorMessage('Cannot load Following items.');
      });
-   }
+ }
 
   // -------------------------------------
   // Profile page frontend
@@ -396,56 +405,91 @@
     listProfileMems
   */ 
   function loadProfile() {
+    var mock_profile_data = {
+      "author_id" : "John Smith",
+      "numOfMemes": "10",
+      "numOfFollowers": "11",
+      "numOfFollowing" : "12",
+      "memes" : mock_recommend_data,
+      "profilePicture" : "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-grey-photo-placeholder-illustrations-vectors-default-avatar-profile-icon-grey-photo-placeholder-99724602.jpg"
+    };
     activeBtn('avatar');
     console.log("profile");
-    populateProfileHeader();
-    listProfileMemes(); 
+    populateProfileHeader(mock_profile_data);
+    listProfileMemes(mock_profile_data); 
   }
   
-  function populateProfileHeader() { 
+  /*
+ Profile: {“author_id”: … , “numOfMemes” …, “numberOfFollwers”:… , “numberOfFollowing”: …, ”memes”:jsonarray}
+  */
+  function populateProfileHeader(data) { 
+    var numFollowers = data.numOfFollowers;
+    var numMemes = data.numOfMemes;
+    var numFollowing = data.numOfFollowing;
+    
     profileContainer.innerHTML = '';
     showElement(profileContainer);
     var profile = $create('div', {});
     profile.setAttribute("class", "profile");
     
-    populateProfileImage(profile);
-    populateProfileUserSettings(profile);
-    
+    populateProfileImage(profile, data.profilePicture);
+    populateProfileUserSettings(profile, data.author_id);
+    populateProfileStats(profile, numMemes, numFollowing, numFollowers);
     profileContainer.appendChild(profile);
   }
   
-  function populateProfileImage(profile) {
+  function populateProfileImage(profile, profilePicture) {
     var profileImage = $create('div', {});
     profileImage.setAttribute("class", "profile-image");
-    var image = $create('img', {src: "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-grey-photo-placeholder-illustrations-vectors-default-avatar-profile-icon-grey-photo-placeholder-99724602.jpg"}); //hardcode
+    var image = $create('img', {src: profilePicture}); //hardcode
     profileImage.appendChild(image);
     profile.appendChild(profileImage);
   }
   
-  function populateProfileUserSettings(profile) {
+  function populateProfileUserSettings(profile, authorId) {
     var profileUserSettings = $create('div', {});
     profileUserSettings.setAttribute("class", "profile-user-settings");
     var profileUserName = $create('h1', {});
     profileUserName.setAttribute("class", "profile-user-name");
     
-    let userName = "Charlieferguson";
+    let userName = authorId;
     profileUserName.textContent += '@' + userName;
     profileUserSettings.appendChild(profileUserName);
     profile.appendChild(profileUserSettings);
   }
   
-  function populateMemesOnProfile() {
+  function populateProfileStats(profile, numPosts, numFollowing, numFollowers) {
+    var profileStats = $create('div', {});
+    profileStats.setAttribute("class", "profile-stats");
+    var posts = $create('li', {});
+    var followers = $create('li', {});
+    var following = $create('li', {});
+    posts.setAttribute("class", "profile-stat-count");
+    followers.setAttribute("class", "profile-stat-count");
+    following.setAttribute("class", "profile-stat-count");
+    
+    posts.textContent += "Posts " + numPosts;
+    followers.textContent += "Followers " + numFollowers;
+    following.textContent += "Following " + numFollowing;
+    
+    profileStats.appendChild(posts);
+    profileStats.appendChild(followers);
+    profileStats.appendChild(following);    
+    profile.appendChild(profileStats);
+  }
+  
+  function populateMemesOnProfile(data) {
     showElement(memes);
     
     var images = document.querySelector('#memes');
     images.innerHTML = '';
-     listMemes(mock_recommend_data, "create");
+    listMemes(data.memes, "create");
     
   }
   
-  function listProfileMemes() { 
+  function listProfileMemes(data) { 
     prepProfilePage();
-    populateMemesOnProfile();
+    populateMemesOnProfile(data);
   }
   
   /* prepProfilePage():
@@ -535,6 +579,7 @@
     
 
   }
+  
   function changeFriendship(author_id){
       
       var  author_list= document.querySelectorAll('.' + author_id);
@@ -572,123 +617,262 @@
   Adds the template images as figures to the document
   TODO: I need to refactor this for clarity...
   */
-  function simpleListTemplates(templates) { 
+  function listTemplates(templates) { 
     var memes = document.querySelector('#memes');
     hideElement(memes);
     hideElement(profileContainer);
-
-
+    
     var images = document.querySelector('#templates');
     images.innerHTML = '';
-    var container = $create('div', {id: "templates"});
-    container.setAttribute('class', 'templateDisplay');
+    images.className = 'templateDisplay';
     var row = $create('div', {});
-    row.setAttribute("class", "row");
+    row.setAttribute("class", "row");  
+    /*
+    row
+       column
+           figure(id, className:)
+    */
+    console.log(templates);
     for (var i = 0; i < templates.length; i++) {
       let column = $create('div', {});
       column.setAttribute("class", "column");
-      let id = "fig" + i.toString(10);
-      var template = $create('templates', {id: id});
       
-      if(templates[i]) { 
-        console.log('creating simple template');
-        var img = $create('img', {src: templates[i]});
-        img.setAttribute("class", "img");
-        template.appendChild(img);
-        column.appendChild(template)
-        row.appendChild(column);
-      } else {
-        console.log("No image");
-        figure.appendChild($create('img', {
-        src: 'https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png'
-        }));
-      }
-      container.appendChild(row);
-      images.appendChild(container);
-    }
-       let matches = images.querySelectorAll("div.row > div.column > templates");
-      for(var i = 0; i < matches.length; i++) {
-          matches[i].addEventListener('click', function() {displayTemplate(this, matches)});
-      }
-  }
-  
-  function displayTemplate(tmp, matches) { 
-    console.log("displayTemplate");
-    var src;
-    for(var i = 0; i < matches.length; i++) {
-      console.log(matches[i]);
-      if(matches[i].id == tmp.id) {
-        src = matches[i].querySelector(".img").src;
-        hideElement(matches[i]);
-        displayCreate(src);
-      } else {
-        hideElement(matches[i]);
-      }
-    } 
+      let id = templates[i].id;
+      let image_url = templates[i].image_url;
+      let name = templates[i].name;
+      
+      let template = $create('figure', {id : id, image_url: image_url});
+      template.dataset.id = id;
+      template.dataset.name = name;
+      
+      template.onclick = function(){displayTemplate2(template)};
+     
+      var img = $create('img', {src: image_url});
+      template.appendChild(img);
+      column.appendChild(template)
+      row.appendChild(column);
+
+      images.appendChild(row);
+    } //end of for loop
+       
   }
   
   /*
-    I need to make this img be put into a container that will allow me to remove it anytime there is a new page being loaded
+    a helper function that sends the image url and name to the displayCreatePage function 
   */
-  function displayCreate(img) {
+  function displayTemplate2(template) {
+    var src = template.firstChild.src;
+    let name = template.dataset.name;
+    displayCreatePage(src, name);
+  }
+  
+  /*
+    this is unused - it is ray's code
+  */
+  function displayTemplate(template) { 
+    console.log("displayTemplate");
+    console.log("the template is:");
+    console.log(template);
+    var templates = document.querySelector('#templates');
+    templates.innerHTML = ' ';
+    templates.className = 'ui container';
+    var rowsAndColumns = $create('div', {className: "ui grid stackable"});
+    
+    let row = $create('div', {className: "row"});
+
+    let imageColumn = $create('div', {className: "eight wide column"});
+
+    let card = $create('div', {className: "ui card"});
+    
+    let inputHeader= $create('div', {className: "content"});
+    
+    let header = $create('h2', {className: "header"});
+    
+    header.innerHTML = "Image";
+    inputHeader.appendChild(header);
+    
+    let inputImage= $create('div', {className: "content"});
+    let image =$create('img', {id: "iamge", className: "ui centered medium image" })
+    
+    inputImage.appendChild(image);
+    
+    card.appendChild(inputHeader);
+    
+    card.appendChild(inputImage);
+    imageColumn.appendChild(card);
+    
+    let textColumn = $create('div', {className: "eight wide column"});
+    let textCard = $create('div', {className: "ui card"});
+    let textHeader= $create('div', {className: "content"});
+    let editHeader = $create('h2', {className: "header"});
+    editHeader.ineerHTML = "Edit";
+    textHeader.appendChild(editHeader);
+    let editInput = $create('div', {className: "content content-result"});
+    textCard.appendChild(textHeader);
+    textCard.appendChild(editInput);
+    textColumn.appendChild(textCard);
+    
+    row.appendChild(imageColumn);
+    row.appendChild(textColumn);
+    
+    rowsAndColumns.appendChild(row);
+    templates.append(rowsAndColumns);
+    
+    
+    
+
+//     let id = template.id;
+//     let image_url = template.image_url;
+    
+//     var figure= $create('figure', {id : id, image_url: image_url});
+//     figure.dataset.id = id;
+    
+//     var img = $create('img', {src: image_url});
+//     figure.appendChild(img);
+//     column.appendChild(figure)
+//     row.appendChild(column);
+
+   
+    
+
+    
+     
+  }
+  
+  /*
+    displayCreatePage(img, name)
+    img: the image url that was chosen
+    name: the image name that was chosen
+    
+    this function displays all of the elements of the create
+    meme page - a header, the image, the text fields and a button
+  */
+  function displayCreatePage(img, name) {
+    var templateContainer = document.querySelector('#templates');
+    createHeader(templateContainer);
+    var display = $create('div', {id: 'display'});
+    display.setAttribute
+    addFigure(img, display);
+    
+    var ids = ["upText", "downText", "category", "caption"];
+    createTextFields(display, ids);
+    templateContainer.appendChild(display);
+    
+    addCreateButton(templateContainer, ids, name);
+  }
+  
+  /*
+    addCreateButton:
+    templateContainer: the container that the button will be added to 
+    ids: the ids of the text fields
+    name: the name of the template chosen
+    
+    this funciton adds a button for the user to click when the want to 
+    "create" their meme. It compiles all of the relevant information and
+    passes it to createMeme on click.
+  */
+  function addCreateButton(templateContainer, ids, name) {
+    var footer = $create('div', {id: 'footer'});
+    footer.setAttribute("class", "w3-container");
+    var button = $create('button', {});
+    button.setAttribute("class", "create-button")
+    button.setAttribute("type", "button");
+    button.textContent += "Create Meme";
+    
+    footer.appendChild(button);
+    templateContainer.appendChild(footer);
+    
+    button.addEventListener('click',  () => { createMeme(ids, name); }, false);
+  }
+  
+
+  /*
+    createMemes: 
+    ids: list of the ids of the text fiels elements
+    name: name of the selected template
+    
+    this function gets the values of the text fields and the will pass
+    this values along with the template name to create the meme
+  */
+  function createMeme(ids, name) {
+    var container = display.lastChild;
+    var values = ["", "", "", ""];
+    for(var i = 0; i < ids.length; i++) {
+      var temp = ids[i];
+      var p = container.children[i];
+      var input = p.children[1].value;
+      values[i] = input;
+    }
+    console.log(name);
+    console.log(values);
+  }
+  
+  /*
+    addFigure(img, display)
+    img: the image that was chosen by the user
+    display: the sub view that the image will be added to
+    
+    this funcion adds the relevant image to the "create meme" view
+  */
+  function addFigure(img, display) {
     var figure = $create('img', {src: img});
     var template = $create('templates', {});
-    
-    var templateContainer = document.querySelector('#templates');
-    templateContainer.innerHTML = '';
-    figure.setAttribute("class", "templates large");
+    template.setAttribute("float", "right");
+    figure.setAttribute("class", "templates large");    
     template.appendChild(figure);
-    template.innerHTML = template.innerHTML + '<div> <input type ="text" placeholder ="upText" id = "upText" ></input> <input type ="text" placeholder = "downText" id = "downText" ></input><input type ="text" placeholder = "category" id = "category" ></input><input type ="text" placeholder = "caption" id = "caption" ></input><input type="submit" id = "create" value = "Create"></input> </div>';
-    templateContainer.appendChild(template);
+    
+    display.appendChild(template);
   }
+  
+  /* 
+    createTextFields(display)
+    display: The subview that the TF will be added to
+    
+    This function adds the text fields to the subview display on the 
+    create memes view
+  */
+  function createTextFields(display, ids) {
+    var container = $create('form', {});
+    container.setAttribute("class", "w3-container");
+    var fields = ["Up Text", "Down Text", "Category", "Caption"];
+    var textFields = $create('container', {});
+    for(var i = 0; i <fields.length; i++) {
+      var fieldP = $create('p', {id: ids[i]});
+      var label = $create('label', {});
+      label.textContent += fields[i];
+      var input = $create('input', {});
+      input.setAttribute("class", "w3-input");
+      input.setAttribute("type", "text");
+      fieldP.appendChild(label);
+      fieldP.appendChild(input);
+      textFields.appendChild(fieldP);
+    }
+    display.appendChild(textFields);
+  }
+  
+  /*
+    createHeader(container)
+    container: the subview for the header to be added to
+    
+    this function adds a header to the create meme page on the 
+    sub view specified by the container parameter.
+  */
+  function createHeader(container) {
+    container.innerHTML = '';
+    var header = $create('div', {id: 'Header'});
+    header.setAttribute("class", "w3-container w3-blue");
+    header.textContent += "Create Your Meme";
+    container.appendChild(header);
+  }
+  
   /**
    * List recommendation items base on the data received
    
    * @param items - An array of item JSON objects
    */
   
-  function listTemplates(items) {
-    showElement(memes);
-    var images = document.querySelector('#memes');
-    images.innerHTML = '';
-    var ids =  [];
-    for (var i = 0; i < items.length; i++) {
-      let id = "img" + i.toString(10);
-      addTemplate(images, items[i], id);
-      ids.push(id);
-    }
-  }
-
-  /**
-   * Add a single item to the list
-   *
-   * @param itemList - The <ul id="item-list"> tag (DOM container)
-   * @param item - The item data (JSON object)
-   *
-  <div id="columns">
-    <figure>
-       <img src="//storage.googleapis.com/meme_generator/test.png">
-	    <figcaption>Computer Science memes</figcaption>
-	</figure>
-   */
-  function addTemplate(itemList, item, id) {
-    // create the <figure> tag and specify the id and class attributes
-    var figure = $create('figure', {id: id});
-    figure.setAttribute("class", "figure2");
-    // item image
-    if (item) {
-      var img = $create('img', {src: item});
-      figure.appendChild(img);
-    } else {
-      figure.appendChild($create('img', {
-        src: 'https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png'
-      }));
-    }
-    itemList.appendChild(figure);
-  }
-  
   // ***********************
-  // Listing memes on recomended (maybe following) page(s)
+  // Listing memes on reccomended (maybe following) page(s)
   // ***********************
   
   function listMemes(items, feature) {
@@ -707,8 +891,8 @@
     var caption = meme.caption;
     var author_id = meme.userId;
     var image_url = meme.image_url;
-    var follow = meme.follow;
-    var favorite = meme.favorite;
+    var followed = meme.follow;
+    var favorite= meme.favorite;
     var numberOfLikes = meme.numberOfLikes;
     
     var figure = $create('figure',{
@@ -718,7 +902,7 @@
     
     figure.dataset.author = author_id;
     figure.dataset.meme_id = meme_id;
-    figure.dataset.favorite = meme.favorite;
+    figure.dataset.favorite = favorite;
 
     // item image
     if (image_url) {
@@ -726,14 +910,14 @@
     } else {
       figure.appendChild($create('img', {
         src: 'https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png'
-      }));
+      })); 
     }
     
     // follow user link
     var followUserLink = $create('i', {
-      className: follow ? 'fas fa-user-friends '+ author_id : 'fa fa-user-plus '+ author_id
+      className: followed ? 'fas fa-user-friends '+ author_id : 'fa fa-user-plus '+ author_id
     });
-    followUserLink.dataset.followed= follow;
+    followUserLink.dataset.followed= followed;
     followUserLink.onclick = function(){changeFriendship(author_id)};
 
     //favorite link
@@ -746,7 +930,7 @@
     
     //figure
     var author = $create('figcaption');
-    author.innerHTML = '<i class="fa fa-user"></i>'+ author_id;
+    author.innerHTML = '<i class="fa fa-user"></i>'+ author_id
     if(feature == "recommend"){author.appendChild(followUserLink);}
     var figcaption = $create('figcaption');
     figcaption.innerHTML = caption;
@@ -758,15 +942,16 @@
     memeList.appendChild(figure);
   }
    
-  function createMemes(information){
+  function createMemes(textValues, templateName){
         // request parameters
     console.log("create");
-    var templateId = 'buzz';
-    var category = document.querySelector('#category').value;
-    var caption = document.querySelector('#caption').value;
-    var upText = document.querySelector('#upText').value;
-    var downText = document.querySelector('#downText').value;
+    var templateId = templateName;
+    var category = textValues[2];
+    var caption = textValues[3];
+    var upText = textValues[0];
+    var downText = textValues[1];
        
+    console.log()
     var url = './create';
     var req = JSON.stringify({
         templateId : templateId, 
@@ -780,8 +965,7 @@
        function(res) {
          var result = JSON.parse(res);
          if (result.status === 'OK' || result.result === 'SUCCESS') {
-           listMemes([{"url": result.image_url, 
-                 "caption": caption, "author": result.user_id }], "create")
+           listMemes(result, "create")
          }
        });
     
