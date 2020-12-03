@@ -25,6 +25,7 @@ public class MySQLConnection implements DBConnection {
     public MySQLConnection() {
      	 try {
      		 Class.forName("com.mysql.cj.jdbc.Driver").getConstructor().newInstance();
+     		 System.out.println(MySQLDBUtil.URL);
      		 conn = DriverManager.getConnection(MySQLDBUtil.URL);
      		
      	 } catch (Exception e) {

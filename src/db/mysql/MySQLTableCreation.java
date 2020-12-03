@@ -13,8 +13,12 @@ public class MySQLTableCreation {
 			// Step 1 Connect to MySQL.
 			System.out.println("Connecting to " + MySQLDBUtil.URL);
 			Class.forName("com.mysql.cj.jdbc.Driver").getConstructor().newInstance();
-			Connection conn = DriverManager.getConnection(MySQLDBUtil.URL);
-			
+			String url = "jdbc:mysql://localhost:3309/memeExchange"
+					+ "?user=tzenglearning&password=12345"
+					+ "&autoReconnect=true"
+					+ "&allowPublicKeyRetrieval=true&useSSL=false";
+			Connection conn = DriverManager.getConnection(url);
+			System.out.println("connected");
 			if (conn == null) {
 				return;
 			}

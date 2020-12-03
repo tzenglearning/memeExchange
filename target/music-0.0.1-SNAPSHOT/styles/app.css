@@ -190,7 +190,7 @@ ul {
  * main section
  */
 .main-section {
-  background: #f3bb43;
+  background: #fffff0;
 }
 
 /**
@@ -497,7 +497,17 @@ div#memes:hover figure:not(:hover) {
   vertical-align: middle;
 }
 
-/*Template Display */
+.column img:hover {
+  opacity: 0.6;
+}
+
+.column-create {
+  flex: 15%;
+  max-width: 50%;
+  padding: 2px;
+}
+
+*Template Display */
 .templateDisplay {
   max-width: 90%;
   display: flex;
@@ -510,8 +520,8 @@ div#memes:hover figure:not(:hover) {
 }
 
 .templates large {
-  height: 600px;
-  width: 600px;
+  height: 650px;
+  width: 650px;
 }
 
 .profileContainer {
@@ -566,4 +576,95 @@ img.templates{
     color: black;
 }
 
+.profile-stats {
+    margin-top: 2.3rem;
+}
 
+.profile-stats li {
+    display: inline-block;
+    font-size: 1.6rem;
+    line-height: 1.5;
+    margin-right: 4rem;
+    cursor: pointer;
+    color: black;
+
+}
+
+.profile-stats li:last-of-type {
+    margin-right: 0;
+}
+
+.ui.header {
+  color: #fff;
+  margin-bottom: 0;
+};
+
+.desc {
+  color: #ddd;
+  margin-bottom: 2em;   
+}
+
+.container {
+  padding: 2em 0;
+}
+
+.ui.card {
+  width: 100%;
+}
+
+.content-result {
+  min-height: 330px;
+}
+
+/* text entry */
+.w3-container:after,.w3-container:before,.w3-panel:after,.w3-panel:before,.w3-row:after,.w3-row:before,.w3-row-padding:after,.w3-row-padding:before,.w3-cell-row:before,.w3-cell-row:after,.w3-clear:after,.w3-clear:before,.w3-bar:before,.w3-bar:after{
+  content: "";
+  display: table;
+  clear: both;
+  font-size: large;
+}
+
+.w3-blue, .w3-hover-blue:hover{
+  color: #fff!important;
+  background-color: #2196F3!important;
+}
+
+.w3-input {
+  padding:8px;
+  display:block;
+  border:none;
+  border-bottom:1px solid #ccc;
+  width:100%
+}
+
+#display {
+  list-style: none;
+  width: 100%;
+  margin: 0;
+  padding: 0px;
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+#display > container {
+    display: inline-block;
+    width: 70%;
+    height: 80%;
+    margin: 2px;
+    padding: 0px;
+    color: black;
+    
+}
+
+.textInLabel {
+  color: black;
+}
+
+.create-button {
+  display: block;
+  width: 100%;
+  color: white;
+  background-color: #2196F3!important;
+  margin-left: auto;
+  marign-right: auto;
+}
