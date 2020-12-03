@@ -7,7 +7,6 @@ db/DBConnectionFactory.class
 external/MemeGenerateAPI.class
 rpc/CreateMeme.class
 external/TemplateCreation.class
-rpc/test.class
 rpc/Register.class
 rpc/Login.class
 db/DBConnection.class
@@ -19,3 +18,4 @@ rpc/Logout.class
 rpc/RecommendItem.class
 rpc/FollowUser.class
 entity/Meme.class
+rpc/CreateTemplate.class

@@ -11,7 +11,7 @@ public class MySQLTableCreation {
 	public static void main(String[] args) {
 		try {
 			// Step 1 Connect to MySQL.
-			System.out.println("Connecting to " + MySQLDBUtil.URL);
+			//System.out.println("Connecting to " + MySQLDBUtil.URL);
 			Class.forName("com.mysql.cj.jdbc.Driver").getConstructor().newInstance();
 			String url = "jdbc:mysql://localhost:3309/memeExchange"
 					+ "?user=tzenglearning&password=12345"

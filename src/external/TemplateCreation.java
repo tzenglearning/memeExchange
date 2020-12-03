@@ -80,26 +80,26 @@ public class TemplateCreation {
 	        	String objectName = link.substring(link.lastIndexOf('/')+1, link.length());
 	        	String requestUrl = String.format("https://api.memegen.link/images/%s.png", objectName);
 	        	
-	        	//make connection to download templates
-	        	connection = (HttpURLConnection) new URL(requestUrl).openConnection();
-				connection.setRequestMethod("GET");
-				
-				responseCode = connection.getResponseCode();
-				System.out.println("Sending request to url: " + url);
-				System.out.println("Response code: " + responseCode);
-				
-				if (responseCode != 200) {
-					System.err.println("Error");
-				}
-				
-				InputStream is = new BufferedInputStream(connection.getInputStream());
-
-		        // Read the image and close the stream	
-				BufferedImage originalImage = ImageIO.read(is);
-				ByteArrayOutputStream baos=new ByteArrayOutputStream();
-				ImageIO.write(originalImage, "png", baos );
-				byte[] image=baos.toByteArray();
-				is.close();	
+//	        	//make connection to download templates
+//	        	connection = (HttpURLConnection) new URL(requestUrl).openConnection();
+//				connection.setRequestMethod("GET");
+//				
+//				responseCode = connection.getResponseCode();
+//				System.out.println("Sending request to url: " + url);
+//				System.out.println("Response code: " + responseCode);
+//				
+//				if (responseCode != 200) {
+//					System.err.println("Error");
+//				}
+//				
+//				InputStream is = new BufferedInputStream(connection.getInputStream());
+//
+//		        // Read the image and close the stream	
+//				BufferedImage originalImage = ImageIO.read(is);
+//				ByteArrayOutputStream baos=new ByteArrayOutputStream();
+//				ImageIO.write(originalImage, "png", baos );
+//				byte[] image=baos.toByteArray();
+//				is.close();	
 				
 				//insert into sql
 				
