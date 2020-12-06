@@ -23,4 +23,4 @@ services:
         - "8080:8080"
       volumes:
         - ./target/memeExchange-0.0.1.war:/usr/local/tomcat/webapps/memeExchange-0.0.1.war
-        - $HOME/.config/gcloud:/root/.config/gcloud
+        - ./config/gcloud:/root/.config/gcloud

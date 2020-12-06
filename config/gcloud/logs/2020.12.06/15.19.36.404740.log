@@ -1,0 +1,85 @@
+2020-12-06 15:19:36,406 DEBUG    root            Loaded Command Group: ['gcloud', 'auth']
+2020-12-06 15:19:36,415 DEBUG    root            Loaded Command Group: ['gcloud', 'auth', 'activate_service_account']
+2020-12-06 15:19:36,419 DEBUG    root            (gcloud) The project property must be set to a valid project ID, [memeGenerator] is not a valid project ID.
+To set your project, run:
+
+  $ gcloud config set project PROJECT_ID
+
+or to unset it, run:
+
+  $ gcloud config unset project
+Traceback (most recent call last):
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/googlecloudsdk/calliope/cli.py", line 952, in Execute
+    args = self.__parser.parse_args(_ApplyFlagsFile(argv))
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/googlecloudsdk/calliope/parser_extensions.py", line 701, in parse_args
+    namespace, unknown_args, _ = self._ParseKnownArgs(args, namespace)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/googlecloudsdk/calliope/parser_extensions.py", line 488, in _ParseKnownArgs
+    parser.parse_known_args(args, namespace) or (namespace, []))
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/googlecloudsdk/calliope/parser_extensions.py", line 665, in parse_known_args
+    namespace, unknown_args, error_context = self._ParseKnownArgs(
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/googlecloudsdk/calliope/parser_extensions.py", line 488, in _ParseKnownArgs
+    parser.parse_known_args(args, namespace) or (namespace, []))
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/third_party/argparse/__init__.py", line 1735, in parse_known_args
+    namespace, args = self._parse_known_args(args, namespace)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/third_party/argparse/__init__.py", line 1923, in _parse_known_args
+    positionals_end_index = consume_positionals(start_index)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/third_party/argparse/__init__.py", line 1900, in consume_positionals
+    take_action(action, args)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/third_party/argparse/__init__.py", line 1809, in take_action
+    action(self, namespace, argument_values, option_string)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/googlecloudsdk/calliope/parser_extensions.py", line 1231, in __call__
+    super(CommandGroupAction, self).__call__(
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/third_party/argparse/__init__.py", line 1111, in __call__
+    namespace, arg_strings = parser.parse_known_args(arg_strings, namespace)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/googlecloudsdk/calliope/parser_extensions.py", line 665, in parse_known_args
+    namespace, unknown_args, error_context = self._ParseKnownArgs(
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/googlecloudsdk/calliope/parser_extensions.py", line 488, in _ParseKnownArgs
+    parser.parse_known_args(args, namespace) or (namespace, []))
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/third_party/argparse/__init__.py", line 1735, in parse_known_args
+    namespace, args = self._parse_known_args(args, namespace)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/third_party/argparse/__init__.py", line 1923, in _parse_known_args
+    positionals_end_index = consume_positionals(start_index)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/third_party/argparse/__init__.py", line 1900, in consume_positionals
+    take_action(action, args)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/third_party/argparse/__init__.py", line 1809, in take_action
+    action(self, namespace, argument_values, option_string)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/googlecloudsdk/calliope/parser_extensions.py", line 1231, in __call__
+    super(CommandGroupAction, self).__call__(
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/third_party/argparse/__init__.py", line 1111, in __call__
+    namespace, arg_strings = parser.parse_known_args(arg_strings, namespace)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/googlecloudsdk/calliope/parser_extensions.py", line 665, in parse_known_args
+    namespace, unknown_args, error_context = self._ParseKnownArgs(
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/googlecloudsdk/calliope/parser_extensions.py", line 488, in _ParseKnownArgs
+    parser.parse_known_args(args, namespace) or (namespace, []))
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/third_party/argparse/__init__.py", line 1735, in parse_known_args
+    namespace, args = self._parse_known_args(args, namespace)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/third_party/argparse/__init__.py", line 1941, in _parse_known_args
+    start_index = consume_optional(start_index)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/third_party/argparse/__init__.py", line 1881, in consume_optional
+    take_action(action, args, option_string)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/third_party/argparse/__init__.py", line 1809, in take_action
+    action(self, namespace, argument_values, option_string)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/googlecloudsdk/calliope/actions.py", line 143, in __call__
+    properties.VALUES.SetInvocationValue(prop, values, option_string)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/googlecloudsdk/core/properties.py", line 480, in SetInvocationValue
+    prop.Validate(value)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/googlecloudsdk/core/properties.py", line 2435, in Validate
+    self.__validator(value)
+  File "/Users/tzenglearning/Downloads/google-cloud-sdk/lib/googlecloudsdk/core/properties.py", line 1367, in ProjectValidator
+    raise InvalidProjectError(
+googlecloudsdk.core.properties.InvalidProjectError: The project property must be set to a valid project ID, [memeGenerator] is not a valid project ID.
+To set your project, run:
+
+  $ gcloud config set project PROJECT_ID
+
+or to unset it, run:
+
+  $ gcloud config unset project
+2020-12-06 15:19:36,425 ERROR    root            (gcloud) The project property must be set to a valid project ID, [memeGenerator] is not a valid project ID.
+To set your project, run:
+
+  $ gcloud config set project PROJECT_ID
+
+or to unset it, run:
+
+  $ gcloud config unset project

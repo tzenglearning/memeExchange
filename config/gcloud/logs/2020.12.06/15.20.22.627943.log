@@ -1,0 +1,8 @@
+2020-12-06 15:20:22,629 DEBUG    root            Loaded Command Group: ['gcloud', 'auth']
+2020-12-06 15:20:22,635 DEBUG    root            Loaded Command Group: ['gcloud', 'auth', 'activate_service_account']
+2020-12-06 15:20:22,638 DEBUG    root            Running [gcloud.auth.activate-service-account] with arguments: [--key-file: "memeGenerator-4c3a61b618f3.json", --project: "memegenerator-293602"]
+2020-12-06 15:20:22,677 DEBUG    google_auth_httplib2 Making request: POST https://oauth2.googleapis.com/token
+2020-12-06 15:20:23,852 DEBUG    google_auth_httplib2 Making request: POST https://oauth2.googleapis.com/token
+2020-12-06 15:20:24,139 INFO     ___FILE_ONLY___ Activated service account credentials for: [meme-exchange@memegenerator-293602.iam.gserviceaccount.com]
+
+2020-12-06 15:20:24,139 INFO     root            Display format: "none"
