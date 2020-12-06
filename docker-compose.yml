@@ -22,4 +22,5 @@ services:
       ports:
         - "8080:8080"
       volumes:
-        - ./target/music-0.0.1-SNAPSHOT.war:/usr/local/tomcat/webapps/music-0.0.1-SNAPSHOT.war
+        - ./target/memeExchange-0.0.1.war:/usr/local/tomcat/webapps/memeExchange-0.0.1.war
+        - $HOME/.config/gcloud:/root/.config/gcloud

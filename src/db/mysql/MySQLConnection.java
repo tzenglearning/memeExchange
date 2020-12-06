@@ -627,6 +627,42 @@ public class MySQLConnection implements DBConnection {
 		return -1;
 	}
 
+	@Override
+	public Set<Meme> getRecommendation(String userId) {
+		// TODO Auto-generated method stub
+	   	if (conn == null) {
+    		System.err.println("DB Connection Failed");
+			return new HashSet<>();
+		}		
+    	
+		Set<Meme> set = new HashSet<>(); 
+		try {
+			
+			String sql = "SELECT * FROM Memes WHERE user_id != ? limit 10 ";
+			
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, userId);
+			ResultSet rs = statement.executeQuery();
+			
+            while(rs.next()) {
+    			MemeBuilder builder = new MemeBuilder();
+            	builder.setId(rs.getInt("id"));
+            	builder.setImageUrl(rs.getString("image_url"));
+            	builder.setCaption(rs.getString("caption"));
+            	builder.setUserId(rs.getString("user_id"));
+            	builder.setCategory(rs.getString("category"));
+            	builder.setTime(rs.getTimestamp("CreatedDateTime"));
+            	
+            	set.add(builder.build());
+            	
+            }
+            return set;
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return new HashSet<>();
+	}
+
     
 
 

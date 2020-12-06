@@ -9,9 +9,8 @@
   var lat = 37.38;
   
   var mock_recommend_data = [{"id": "1", "image_url": "//storage.googleapis.com/meme_generator/mememasterCS701.png", 
-                "caption": "Hello EveryOne","userId":"mememaster", "favorite": true, "numberOfLikes":"5", "follow":false},{
-"id": "2", "image_url": "//storage.googleapis.com/meme_generator/blb.png", 
-                "caption": "Hello EveryOne","userId":"lol","favorite": false,"numberOfLikes":"5","follow":false}];
+                "caption": "Hello EveryOne","userId":"mememaster", "favorite": true, "numberOfLikes":"5", "follow":false},
+                {"id": "2", "image_url": "//storage.googleapis.com/meme_generator/blb.png", "caption": "Hello EveryOne","userId":"lol","favorite": false,"numberOfLikes":"5","follow":false}];
 
   /**
    * Initialize major event handlers
@@ -29,7 +28,6 @@
     document.querySelector('#avatar').addEventListener('click', loadProfile);
     validateSession();
     //onSessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
-    listMemes(mock_recommend_data, "recommend")
     //onSessionInvalid();
   }
 
@@ -70,7 +68,9 @@
     var welcomeMsg = document.querySelector('#welcome-msg');
     var logoutBtn = document.querySelector('#logout-link');
 
-    welcomeMsg.innerHTML = 'Welcome, ' + user_fullname;
+    welcomeMsg.innerHTML = 'Welcome, ' + user_id;
+    loadRecommendedItems();
+    
 
     showElement(memes);
     showElement(avatar);
@@ -332,9 +332,13 @@
    */
   function loadTemplates() {
     console.log('loadTemplates');
-    showElement(memes);
+    hideElement(memes);
     //activeBtn('create-btn');
-
+    var profileContainer = document.querySelector("#profileContainer");
+    hideElement(profileContainer);
+    var templateSelection = document.querySelector("#templates");
+    showElement(templateSelection);
+    
     // The request parameters
     var url = './templates';
     var params = '';
@@ -370,8 +374,11 @@
   function loadFollowingItems() {
     activeBtn('following-btn');
     console.log("Load Following Items");
+    showElement(memes);
     var profileContainer = document.querySelector("#profileContainer");
     hideElement(profileContainer);
+    var templateSelection = document.querySelector("#templates");
+    hideElement(templateSelection);
     // request parameters
     var url = './feed';
     var params = '';
@@ -526,37 +533,34 @@
     activeBtn('recommend-btn');
     showElement(memes);
     hideElement(profileContainer);
-    var tmps = document.querySelectorAll('templates');
-    for(var i = 0; i < tmps.length; i++) {
-      hideElement(tmps[i]);
-    }
+    var templateSelection = document.querySelector("#templates");
+    hideElement(templateSelection);
+    
     console.log("Load Recommend Items");
-    /*
+ 
     // request parameters
-    //var url = './recommendation' + '?' + 'user_id=' + user_id + '&lat=' + lat + '&lon=' + lng;
-    //var data = null;
+    var url = './recommendation';
+    var data = null;
 
-    // display loading message
-    //showLoadingMessage('Loading recommended items...');
 
     // make AJAX call
-    // ajax('GET', url, data,
-    //   // successful callback
-    //   function(res) {
-    //     var items = JSON.parse(res);
-    //     if (!items || items.length === 0) {
-    //       showWarningMessage('No recommended item. Make sure you have favorites.');
-    //     } else {
-    //       listItems(items);
-    //     }
-    //   },
-    //   // failed callback
-    //   function() {
-    //     showErrorMessage('Cannot load recommended items.');
-    //   }
-    // );
-    */
-    listMemes(mock_recommend_data, "recommend");
+     ajax('GET', url, data,
+       // successful callback
+       function(res) {
+         var items = JSON.parse(res);
+         if (!items || items.length === 0) {
+           showWarningMessage('No recommended item. Make sure you have favorites.');
+         } else {
+           listMemes(items, "recommend");
+         }
+       },
+       // failed callback
+       function() {
+         console.log('Cannot load recommended items.');
+       }
+     );
+    
+    
   }
 
   /**

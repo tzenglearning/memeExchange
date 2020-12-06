@@ -129,6 +129,8 @@ public interface DBConnection {
 	
 	public int getNumberOfFollowing(String userId);
 	
+	public Set<Meme> getRecommendation(String userId);
+	
 	
 }
 

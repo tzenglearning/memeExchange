@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -84,7 +85,7 @@ public class CreateMeme extends HttpServlet {
 		 
 			result.put("memes", array);
 			//get user first name last name
-			result.put("author_id", connection.getFullname(userId));
+			result.put("author_id", userId);
 			
 			//get number of memes users created
 			result.put("numOfMemes", array.length());
@@ -141,9 +142,9 @@ public class CreateMeme extends HttpServlet {
 		
 		try {
 			String userId = session.getAttribute("user_id").toString();
-
+			Random rand = new Random();
 			//store it in the google cloud  
-			String objectName = userId + upText + downText+ ".png";
+			String objectName = userId + String.valueOf(rand.nextInt(100000))+  ".png";
 			Storage storage = StorageOptions.newBuilder().setProjectId(GCPUtil.projectId).build().getService();
 		    BlobId blobId = BlobId.of(GCPUtil.bucketName, objectName);
 		    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
