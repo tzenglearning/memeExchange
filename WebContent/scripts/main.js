@@ -266,9 +266,9 @@
     btn.className += ' active';
   }
 
-  function showLoadingMessage(msg) {
-    var memes = document.querySelector('#memes');
-    memes.innerHTML = '<p class="notice"><i class="fa fa-spinner fa-spin"></i> ' +
+  function showLoadingMessage(msg, location) {
+    var element = document.querySelector("#" + location);
+    element.innerHTML = '<p class="notice"><i class="fa fa-spinner fa-spin"></i> ' +
       msg + '</p>';
   }
 
@@ -311,12 +311,9 @@
    */
   function ajax(method, url, data, successCallback, errorCallback) {
     var xhr = new XMLHttpRequest();
-    console.log(data);
     xhr.open(method, url, true);
     xhr.onload = function() {
-      console.log(xhr.status);
       if (xhr.status === 200) {
-        console.log("hi");
         successCallback(xhr.responseText);
       } else {
         errorCallback();
@@ -372,7 +369,6 @@
        // successful callback
        function(res) {
          var items = JSON.parse(res);
-         console.log(items);
          if (!items || items.length === 0) {
            console.log("No templates.");
            showWarningMessage('No templates.');
@@ -490,36 +486,36 @@
  
  function loadUsers(){
     var userId = document.querySelector('#search').value;
-    var userResult = document.querySelector('#userResult');
-    userResult.innerHTML = "";
     // request parameters
     var url = './user';
-    var params = 'userId=' + userId;
-    var req = JSON.stringify({});
 
-    // display loading message
-    //showLoadingMessage('Loading users...');
+    if(userId !== ""){
+    	var params = 'userId=' + userId;
+    	var req = "";
 
-    // make AJAX call
-     ajax('GET', url + '?' + params, req, function(res) {
-       var items = JSON.parse(res);
-       if (!items) {
-         showWarningMessage('No such user.');
-       } else {
-         var list = document.querySelector("#userResult");
-         listUsers(list, items);
-       }
-     }, function() {
-       showErrorMessage('Cannot Users.');
-     });
+   	    // display loading message
+   		//showLoadingMessage('Loading users...');
+
+        // make AJAX call
+        ajax('GET', url + '?' + params, req, function(res) {
+            var items = JSON.parse(res);
+            if (!items || items.length == 0) {
+               showWarningMessage('No such user.');
+            } else {
+              listUsers(items);
+            }
+          }, function(){
+              console.log('Cannot find any corresponding Users.');
+        })
+    }
  }
  
- function listUsers(list, items){
-    var ul = $create("ul", {id: "item-list"});
- 
+ function listUsers(items){
+    var ul = document.querySelector('#item-list');
+    ul.innerHTML = "";
     for(let i = 0; i < items.length; i++){
-        let item  = items[i];
-    	let listItem = $create("li", {className: "item"});
+        var item  = items[i];
+    	var listItem = $create("li", {className: "item"});
     	var user = $create("img", {src: item.image_url});
     	var userId = $create("h2");
         userId.innerHTML = item.userId;   
@@ -579,7 +575,17 @@
     var followers = $create('li', {className: "profile-stat-count"});
     var following = $create('li', {className: "profile-stat-count"});
     
-     if (userId !== author_id){   
+    
+    posts.textContent += "Posts " + numPosts;
+    followers.textContent += "Followers " + numFollowers;
+    following.textContent += "Following " + numFollowing;
+
+    profileStats.appendChild(posts);
+    profileStats.appendChild(followers);
+    profileStats.appendChild(following);
+    profile.appendChild(profileStats);
+    
+    if (userId !== author_id){   
     	var followButtonContainer = $create('li', {className: "profile-stat-count"});
     	var followButton = $create('button', {id: "follow-btn"});
     	followButton.dataset.author_id = author_id;
@@ -590,18 +596,7 @@
     	followButtonContainer.appendChild(followButton);
         profileStats.appendChild(followButtonContainer);
     }
-    
-    posts.textContent += "Posts " + numPosts;
-    followers.textContent += "Followers " + numFollowers;
-    following.textContent += "Following " + numFollowing;
-    
-    
-    
-    profileStats.appendChild(posts);
-    profileStats.appendChild(followers);
-    profileStats.appendChild(following);
-    profile.appendChild(profileStats);
-  }
+}
   
   function populateMemesOnProfile(data) {
     showElement(memes);
@@ -678,7 +673,6 @@
    * user_id: 1111, visited: [a_list_of_business_ids] }
    */
   function changeFavoriteItem(meme_id) {
-    console.log("here");
     // check whether this item has been visited or not
     var figure = document.querySelector('#meme-' + meme_id);
     var favIcon = document.querySelector('#fav-icon-' + meme_id);
@@ -783,7 +777,6 @@
        column
            figure(id, className:)
     */
-    console.log(templates);
     for (var i = 0; i < templates.length; i++) {
       let column = $create('div', {});
       column.setAttribute("class", "column");
@@ -816,79 +809,6 @@
   }
   
   /*
-    this is unused - it is ray's code
-  */
-  function displayTemplate(template) { 
-    console.log("displayTemplate");
-    console.log("the template is:");
-    console.log(template);
-    var templates = document.querySelector('#templates');
-    templates.innerHTML = ' ';
-    templates.className = 'ui container';
-    var rowsAndColumns = $create('div', {className: "ui grid stackable"});
-    
-    let row = $create('div', {className: "row"});
-
-    let imageColumn = $create('div', {className: "eight wide column"});
-
-    let card = $create('div', {className: "ui card"});
-    
-    let inputHeader= $create('div', {className: "content"});
-    
-    let header = $create('h2', {className: "header"});
-    
-    header.innerHTML = "Image";
-    inputHeader.appendChild(header);
-    
-    let inputImage= $create('div', {className: "content"});
-    let image =$create('img', {id: "iamge", className: "ui centered medium image" })
-    
-    inputImage.appendChild(image);
-    
-    card.appendChild(inputHeader);
-    
-    card.appendChild(inputImage);
-    imageColumn.appendChild(card);
-    
-    let textColumn = $create('div', {className: "eight wide column"});
-    let textCard = $create('div', {className: "ui card"});
-    let textHeader= $create('div', {className: "content"});
-    let editHeader = $create('h2', {className: "header"});
-    editHeader.ineerHTML = "Edit";
-    textHeader.appendChild(editHeader);
-    let editInput = $create('div', {className: "content content-result"});
-    textCard.appendChild(textHeader);
-    textCard.appendChild(editInput);
-    textColumn.appendChild(textCard);
-    
-    row.appendChild(imageColumn);
-    row.appendChild(textColumn);
-    
-    rowsAndColumns.appendChild(row);
-    templates.append(rowsAndColumns);
-    
-    
-    
-
-//     let id = template.id;
-//     let image_url = template.image_url;
-    
-//     var figure= $create('figure', {id : id, image_url: image_url});
-//     figure.dataset.id = id;
-    
-//     var img = $create('img', {src: image_url});
-//     figure.appendChild(img);
-//     column.appendChild(figure)
-//     row.appendChild(column);
-
-   
-    
-
-    
-     
-  }
-  
-  /*
     displayCreatePage(img, name)
     img: the image url that was chosen
     name: the image name that was chosen
@@ -900,7 +820,6 @@
     var templateContainer = document.querySelector('#templates');
     createHeader(templateContainer);
     var display = $create('div', {id: 'display'});
-    display.setAttribute
     addFigure(img, display);
     
     var ids = ["upText", "downText", "category", "caption"];
@@ -958,7 +877,9 @@
     var downText = values[1];
     var category = values[2];
     var caption = values[3];
-
+    
+    //display ;oading message
+    showLoadingMessage("Waiting for your meme to be created, it is on its way...", "templates");
     var url = './create';
     var req = JSON.stringify({
         templateId : templateId, 
@@ -966,13 +887,11 @@
         caption: caption, 
         upText: upText, 
         downText: downText});
-    console.log(req);
     ajax('POST', url, req,
       // successful callback
        function(res) {
          var result = JSON.parse(res);
          if (result && result.length > 0) {
-           console.log("hii");
            hideElement(document.querySelector('#templates'));
            showElement(document.querySelector('#memes'));
            listMemes(result, "create")
@@ -989,7 +908,7 @@
   */
   function addFigure(img, display) {
     var figure = $create('img', {src: img});
-    var template = $create('templates', {});
+    var template = $create('div', {className:"previewTemplate"});
     template.setAttribute("float", "right");
     figure.setAttribute("class", "templates large");    
     template.appendChild(figure);
@@ -1008,7 +927,7 @@
     var container = $create('form', {});
     container.setAttribute("class", "w3-container");
     var fields = ["Up Text", "Down Text", "Category", "Caption"];
-    var textFields = $create('container', {});
+    var textFields = $create('div', {className: "textboxContainer"});
     for(var i = 0; i <fields.length; i++) {
       var fieldP = $create('p', {id: ids[i]});
       var label = $create('label', {});
@@ -1050,10 +969,6 @@
   
   function listMemes(items, feature) {
     var images = document.querySelector('#memes');
-    console.log("hiiiii");
-    console.log(images);
-    console.log(items);
-    console.log(feature);
     images.innerHTML = '';
     //to be developed
     //images.innerHTML = $create('div'); // clear current results
@@ -1071,7 +986,6 @@
     var followed = meme.follow;
     var favorite= meme.favorite;
     var numberOfLikes = meme.numberOfLikes;
-    console.log(memeList);
     
     var figure = $create('figure',{
       id: 'meme-' + meme_id,
@@ -1126,14 +1040,12 @@
    
   function createMemes(textValues, templateName){
         // request parameters
-    console.log("create");
     var templateId = templateName;
     var category = textValues[2];
     var caption = textValues[3];
     var upText = textValues[0];
     var downText = textValues[1];
        
-    console.log()
     var url = './create';
     var req = JSON.stringify({
         templateId : templateId, 
@@ -1141,7 +1053,7 @@
         caption: caption, 
         upText: upText, 
         downText: downText});
-    console.log(req);
+        
     ajax('POST', url, req,
       // successful callback
        function(res) {

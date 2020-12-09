@@ -673,7 +673,13 @@ img.templates{
   marign-right: auto;
 }
 
-.searchForm {
+
+
+.searchForm{
+    display: inline-block;
+}
+.previewTemplate,
+.textboxContainer {
     display: flex;
     flex-direction: column;
     align-content: space-between;
@@ -681,11 +687,19 @@ img.templates{
     margin: 50px;
 }
 
-.searchForm form {
-	display: inline-block;
+#search-btn{
+	border: none;
+    border-radius: 4px;
+    background-color: #df574b;
+    width: 8em;
+    height: 2em;
+    color: white;
+	font-weight: 600;
+    margin: 0.5em;
+    cursor: pointer;
 }
 
-#search-btn, .followButton{
+ .followButton{
 	border: none;
     border-radius: 4px;
     background-color: #df574b;
@@ -736,6 +750,5 @@ input#search:focus {
 
 #userResult{
 	min-height: 20vh;
-}
-
+	width: 20px
 }
