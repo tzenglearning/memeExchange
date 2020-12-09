@@ -25,9 +25,9 @@
     document.querySelector('#register-btn').addEventListener('click', register);
     document.querySelector('#following-btn').addEventListener('click', loadFollowingItems);
     document.querySelector('#recommend-btn').addEventListener('click', loadRecommendedItems);
-    document.querySelector('#avatar').addEventListener('click', loadProfile);
+    document.querySelector('#avatar').addEventListener('click', function(){loadProfile("")});
     validateSession();
-    //onSessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
+    //SessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
     //onSessionInvalid();
   }
 
@@ -297,6 +297,7 @@
    */
   function ajax(method, url, data, successCallback, errorCallback) {
     var xhr = new XMLHttpRequest();
+    console.log(data);
     xhr.open(method, url, true);
     xhr.onload = function() {
       console.log(xhr.status);
@@ -408,34 +409,30 @@
     populateProfileHeader
     listProfileMems
   */ 
-  function loadProfile() {
-    var mock_profile_data = {
-      "author_id" : "John Smith",
-      "numOfMemes": "10",
-      "numOfFollowers": "11",
-      "numOfFollowing" : "12",
-      "memes" : mock_recommend_data,
-      "profilePicture" : "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-grey-photo-placeholder-illustrations-vectors-default-avatar-profile-icon-grey-photo-placeholder-99724602.jpg"
-    };
+  function loadProfile(name) {
     
+    var userId = name;
+    if(name === ""){
+      userId = document.querySelector("#welcome-msg").innerHTML.substring(9);
+    }
+    
+    hideElement(document.querySelector('#templates'));
     // request parameters
     var url = './create';
-    var params = '';
-    var req = JSON.stringify({});
+    var params = 'userId=' + userId;
+    var req = "";
 
     // make AJAX call
      ajax('GET', url + '?' + params, req, function(res) {
        var items = JSON.parse(res);
        if (!items || items.length == 0) {
-         showWarningMessage('No items.');
+          showWarningMessage('No items.');
        } else {
-            activeBtn('avatar');
-    		console.log("profile");
     		populateProfileHeader(items);
     		listProfileMemes(items); 
        }
      }, function() {
-       showErrorMessage('Cannot load Following items.');
+       showErrorMessage('Cannot load profile.');
      });
      
 
@@ -611,7 +608,7 @@
     });
     
     var method = (!followed) ? 'POST' : 'DELETE';
-    console.log(method);
+
     ajax(method, url, req,
         // successful callback
         function(res) {
@@ -976,7 +973,11 @@
     
     //figure
     var author = $create('figcaption');
-    author.innerHTML = '<i class="fa fa-user"></i>'+ author_id
+    var user = $create('i');
+    user.className = "fa fa-user"; 
+    user.innerHTML = author_id;
+    user.onclick = function(){loadProfile(user.innerHTML)};
+    author.appendChild(user);
     if(feature == "recommend"){author.appendChild(followUserLink);}
     var figcaption = $create('figcaption');
     figcaption.innerHTML = caption;

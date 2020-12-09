@@ -417,7 +417,7 @@
       "memes" : mock_recommend_data,
       "profilePicture" : "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-grey-photo-placeholder-illustrations-vectors-default-avatar-profile-icon-grey-photo-placeholder-99724602.jpg"
     };
-    
+    hideElement(document.querySelector('#templates'));
     // request parameters
     var url = './create';
     var params = '';

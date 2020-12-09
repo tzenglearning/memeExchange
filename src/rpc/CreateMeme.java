@@ -58,7 +58,8 @@ public class CreateMeme extends HttpServlet {
 		HttpSession session = request.getSession(false);
 		
 		try {
-		    String userId =  session.getAttribute("user_id").toString();
+			String userId = request.getParameter("userId");
+			System.out.println(userId);
 		    
 		    //get memes the user created
 			Set<Meme> set = connection.getUserMemes(userId);
