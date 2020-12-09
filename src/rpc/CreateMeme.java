@@ -97,6 +97,10 @@ public class CreateMeme extends HttpServlet {
 			//get number of people he followed
 			result.put("numOfFollowing", connection.getNumberOfFollowing(userId));
 			
+			//if followed this user already
+			String fromUserId = session.getAttribute("user_id").toString();
+			result.put("followed", connection.followedUser(fromUserId, userId));
+			
 			result.put("profilePicture", "https://thumbs.dreamstime.com/b/"
 					+ "default-avatar-profile-icon-grey-photo-placeholder-"
 					+ "illustrations-vectors-default-avatar-profile-icon-grey-photo-placeholder-99724602.jpg");

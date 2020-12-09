@@ -25,9 +25,11 @@
     document.querySelector('#register-btn').addEventListener('click', register);
     document.querySelector('#following-btn').addEventListener('click', loadFollowingItems);
     document.querySelector('#recommend-btn').addEventListener('click', loadRecommendedItems);
-    document.querySelector('#avatar').addEventListener('click', loadProfile);
+    document.querySelector('#avatar').addEventListener('click', function(){loadProfile("")});
+    document.querySelector('#explore-btn').addEventListener('click', showExplorePage);
+    document.querySelector("#search-btn").addEventListenr('click', loadUsers);
     validateSession();
-    //onSessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
+    //SessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
     //onSessionInvalid();
   }
 
@@ -67,6 +69,8 @@
     var avatar = document.querySelector('#avatar');
     var welcomeMsg = document.querySelector('#welcome-msg');
     var logoutBtn = document.querySelector('#logout-link');
+    var templates = document.querySelector('#templates');
+    var explorePage = document.querySelector('#explore-page');
 
     welcomeMsg.innerHTML = 'Welcome, ' + user_id;
     loadRecommendedItems();
@@ -78,6 +82,8 @@
     showElement(logoutBtn, 'inline-block');
     hideElement(loginForm);
     hideElement(registerForm);
+    hideElement(templates);
+    hideElements(explorePage);
   }
 
   function onSessionInvalid() {
@@ -87,12 +93,16 @@
     var avatar = document.querySelector('#avatar');
     var welcomeMsg = document.querySelector('#welcome-msg');
     var logoutBtn = document.querySelector('#logout-link');
+    var templates = document.querySelector('#templates');
+    var explorePage = document.querySelector('#explore-page');
 
     hideElement(memes);
     hideElement(avatar);
     hideElement(logoutBtn);
     hideElement(welcomeMsg);
     hideElement(registerForm);
+    hideElement(templates);
+    hideElement(explorePage);
 
     clearLoginError();
     showElement(loginForm);
@@ -118,12 +128,16 @@
     var avatar = document.querySelector('#avatar');
     var welcomeMsg = document.querySelector('#welcome-msg');
     var logoutBtn = document.querySelector('#logout-link');
+    var templates = document.querySelector('#templates');
+    var explorePage = document.querySelector('#explore-page');
 
     hideElement(memes);
     hideElement(avatar);
     hideElement(logoutBtn);
     hideElement(welcomeMsg);
     hideElement(loginForm);
+    hideElement(templates);
+    hideElement(explorePage);
     
     clearRegisterResult();
     showElement(registerForm);
@@ -297,6 +311,7 @@
    */
   function ajax(method, url, data, successCallback, errorCallback) {
     var xhr = new XMLHttpRequest();
+    console.log(data);
     xhr.open(method, url, true);
     xhr.onload = function() {
       console.log(xhr.status);
@@ -331,13 +346,18 @@
    * /templates
    */
   function loadTemplates() {
-    console.log('loadTemplates');
-    hideElement(memes);
-    //activeBtn('create-btn');
+    var memes = document.querySelector('#memes');
+    var explorePage = document.querySelector('#explore-page');
     var profileContainer = document.querySelector("#profileContainer");
+    var templates = document.querySelector('#templates');
+    
+    
+    hideElement(memes);
+    hideElement(explorePage);
     hideElement(profileContainer);
-    var templateSelection = document.querySelector("#templates");
-    showElement(templateSelection);
+    showElement(templates);
+    
+    
     
     // The request parameters
     var url = './templates';
@@ -372,13 +392,17 @@
    * /history?user_id=1111
    */
   function loadFollowingItems() {
-    activeBtn('following-btn');
-    console.log("Load Following Items");
-    showElement(memes);
+    var memes = document.querySelector('#memes');
+    var explorePage = document.querySelector('#explore-page');
     var profileContainer = document.querySelector("#profileContainer");
+    var templates = document.querySelector('#templates');
+    
+    
+    showElement(memes);
+    hideElement(explorePage);
     hideElement(profileContainer);
-    var templateSelection = document.querySelector("#templates");
-    hideElement(templateSelection);
+    hideElement(templates);
+    
     // request parameters
     var url = './feed';
     var params = '';
@@ -408,39 +432,103 @@
     populateProfileHeader
     listProfileMems
   */ 
-  function loadProfile() {
-    var mock_profile_data = {
-      "author_id" : "John Smith",
-      "numOfMemes": "10",
-      "numOfFollowers": "11",
-      "numOfFollowing" : "12",
-      "memes" : mock_recommend_data,
-      "profilePicture" : "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-grey-photo-placeholder-illustrations-vectors-default-avatar-profile-icon-grey-photo-placeholder-99724602.jpg"
-    };
-    hideElement(document.querySelector('#templates'));
+  function loadProfile(name) {
+  
+    var memes = document.querySelector('#memes');
+    var explorePage = document.querySelector('#explore-page');
+    var profileContainer = document.querySelector("#profileContainer");
+    var templates = document.querySelector('#templates');
+    
+    
+    hideElement(memes);
+    hideElement(explorePage);
+    hideElement(templates);
+    showElement(profileContainer);
+
+    
+    var userId = name;
+    if(name === ""){
+      userId = document.querySelector("#welcome-msg").innerHTML.substring(9);
+    }
+    
     // request parameters
     var url = './create';
-    var params = '';
-    var req = JSON.stringify({});
+    var params = 'userId=' + userId;
+    var req = "";
 
     // make AJAX call
      ajax('GET', url + '?' + params, req, function(res) {
        var items = JSON.parse(res);
        if (!items || items.length == 0) {
-         showWarningMessage('No items.');
+          showWarningMessage('No items.');
        } else {
-            activeBtn('avatar');
-    		console.log("profile");
     		populateProfileHeader(items);
     		listProfileMemes(items); 
        }
      }, function() {
-       showErrorMessage('Cannot load Following items.');
+       showErrorMessage('Cannot load profile.');
      });
      
 
   }
   
+  //load explore page
+  function showExplorePage(){
+    var memes = document.querySelector('#memes');
+    var explorePage = document.querySelector('#explore-page');
+    var profileContainer = document.querySelector("#profileContainer");
+    var templates = document.querySelector('#templates');
+    
+    
+    hideElement(memes);
+    showElement(explorePage);
+    hideElement(profileContainer);
+    hideElement(templates);
+    
+    explorePage.innerHTML = "";
+    explorePage.style.display = "flex";
+ }
+ 
+ function loadUsers(userId){   
+    // request parameters
+    var url = './user';
+    var params = 'userId= ' + userId;
+    var req = JSON.stringify({});
+
+    // display loading message
+    //showLoadingMessage('Loading users...');
+
+    // make AJAX call
+     ajax('GET', url + '?' + params, req, function(res) {
+       var items = JSON.parse(res);
+       if (!items) {
+         showWarningMessage('No such user.');
+       } else {
+         var list = document.querySelector("#userResult");
+         listUsers(list, items);
+       }
+     }, function() {
+       showErrorMessage('Cannot Users.');
+     });
+ }
+ 
+ function listUsers(list, items){
+    var list = $create("ul", {id: "item-list"});
+    
+    for(let i = 0; i < list.length; i++){
+        let item  = list[i];
+    	let listItem = $create("li", {className: "item"});
+    	var user = $create("img", {src: item.image_url});
+    	var userId = $create("h2");
+        userId.innerHTML = item.userId;   
+        listItem.appendChild(user);
+        listItem.appendChild(userId);
+        list.appendChild(item1);
+    }
+    
+    var userResult = document.querySelector("#userResult");
+    userResult.appendChild(list);    
+ }
   /*
  Profile: {“author_id”: … , “numOfMemes” …, “numberOfFollwers”:… , “numberOfFollowing”: …, ”memes”:jsonarray}
   */
@@ -530,13 +618,16 @@
    * /recommendation?user_id=1111
    */
   function loadRecommendedItems() {
-    activeBtn('recommend-btn');
-    showElement(memes);
-    hideElement(profileContainer);
-    var templateSelection = document.querySelector("#templates");
-    hideElement(templateSelection);
+    var memes = document.querySelector('#memes');
+    var explorePage = document.querySelector('#explore-page');
+    var profileContainer = document.querySelector("#profileContainer");
+    var templates = document.querySelector('#templates');
     
-    console.log("Load Recommend Items");
+    
+    showElement(memes);
+    hideElement(explorePage);
+    hideElement(templates);
+    hideElement(profileContainer);
  
     // request parameters
     var url = './recommendation';
@@ -611,7 +702,7 @@
     });
     
     var method = (!followed) ? 'POST' : 'DELETE';
-    console.log(method);
+
     ajax(method, url, req,
         // successful callback
         function(res) {
@@ -976,7 +1067,11 @@
     
     //figure
     var author = $create('figcaption');
-    author.innerHTML = '<i class="fa fa-user"></i>'+ author_id
+    var user = $create('i');
+    user.className = "fa fa-user"; 
+    user.innerHTML = author_id;
+    user.onclick = function(){loadProfile(user.innerHTML)};
+    author.appendChild(user);
     if(feature == "recommend"){author.appendChild(followUserLink);}
     var figcaption = $create('figcaption');
     figcaption.innerHTML = caption;

@@ -663,6 +663,28 @@ public class MySQLConnection implements DBConnection {
 		return new HashSet<>();
 	}
 
+	@Override
+	public Set<String> getUsers(String userId) {
+		// TODO Auto-generated method stub
+		if (conn == null) {
+			return new HashSet<>();
+		}		
+		Set<String> result = new HashSet<>();
+		try {
+			String sql = "SELECT user_id FROM Users WHERE user_id like ?";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, "%" + userId + "%");
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				result.add(rs.getString("user_id"));
+			}
+			return result;
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return new HashSet<>();
+	}
+
     
 
 

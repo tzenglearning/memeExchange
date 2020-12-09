@@ -11,6 +11,7 @@ rpc/Register.class
 rpc/Login.class
 db/DBConnection.class
 rpc/RpcHelper.class
+rpc/GetUsers.class
 db/mysql/MySQLDBUtil.class
 entity/Meme$MemeBuilder.class
 db/mysql/MySQLConnection.class

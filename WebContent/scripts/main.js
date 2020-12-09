@@ -26,6 +26,8 @@
     document.querySelector('#following-btn').addEventListener('click', loadFollowingItems);
     document.querySelector('#recommend-btn').addEventListener('click', loadRecommendedItems);
     document.querySelector('#avatar').addEventListener('click', function(){loadProfile("")});
+    document.querySelector('#explore-btn').addEventListener('click', showExplorePage);
+    document.querySelector("#search-btn").addEventListener('click', loadUsers);
     validateSession();
     //SessionValid({"user_id":"1111","name":"John Smith","status":"OK"});
     //onSessionInvalid();
@@ -67,6 +69,8 @@
     var avatar = document.querySelector('#avatar');
     var welcomeMsg = document.querySelector('#welcome-msg');
     var logoutBtn = document.querySelector('#logout-link');
+    var templates = document.querySelector('#templates');
+    var explorePage = document.querySelector('#explore-page');
 
     welcomeMsg.innerHTML = 'Welcome, ' + user_id;
     loadRecommendedItems();
@@ -78,6 +82,8 @@
     showElement(logoutBtn, 'inline-block');
     hideElement(loginForm);
     hideElement(registerForm);
+    hideElement(templates);
+    hideElement(explorePage);
   }
 
   function onSessionInvalid() {
@@ -87,12 +93,16 @@
     var avatar = document.querySelector('#avatar');
     var welcomeMsg = document.querySelector('#welcome-msg');
     var logoutBtn = document.querySelector('#logout-link');
+    var templates = document.querySelector('#templates');
+    var explorePage = document.querySelector('#explore-page');
 
     hideElement(memes);
     hideElement(avatar);
     hideElement(logoutBtn);
     hideElement(welcomeMsg);
     hideElement(registerForm);
+    hideElement(templates);
+    hideElement(explorePage);
 
     clearLoginError();
     showElement(loginForm);
@@ -118,12 +128,16 @@
     var avatar = document.querySelector('#avatar');
     var welcomeMsg = document.querySelector('#welcome-msg');
     var logoutBtn = document.querySelector('#logout-link');
+    var templates = document.querySelector('#templates');
+    var explorePage = document.querySelector('#explore-page');
 
     hideElement(memes);
     hideElement(avatar);
     hideElement(logoutBtn);
     hideElement(welcomeMsg);
     hideElement(loginForm);
+    hideElement(templates);
+    hideElement(explorePage);
     
     clearRegisterResult();
     showElement(registerForm);
@@ -332,13 +346,18 @@
    * /templates
    */
   function loadTemplates() {
-    console.log('loadTemplates');
-    hideElement(memes);
-    //activeBtn('create-btn');
+    var memes = document.querySelector('#memes');
+    var explorePage = document.querySelector('#explore-page');
     var profileContainer = document.querySelector("#profileContainer");
+    var templates = document.querySelector('#templates');
+    
+    
+    hideElement(memes);
+    hideElement(explorePage);
     hideElement(profileContainer);
-    var templateSelection = document.querySelector("#templates");
-    showElement(templateSelection);
+    showElement(templates);
+    
+    
     
     // The request parameters
     var url = './templates';
@@ -373,13 +392,17 @@
    * /history?user_id=1111
    */
   function loadFollowingItems() {
-    activeBtn('following-btn');
-    console.log("Load Following Items");
-    showElement(memes);
+    var memes = document.querySelector('#memes');
+    var explorePage = document.querySelector('#explore-page');
     var profileContainer = document.querySelector("#profileContainer");
+    var templates = document.querySelector('#templates');
+    
+    
+    showElement(memes);
+    hideElement(explorePage);
     hideElement(profileContainer);
-    var templateSelection = document.querySelector("#templates");
-    hideElement(templateSelection);
+    hideElement(templates);
+    
     // request parameters
     var url = './feed';
     var params = '';
@@ -410,13 +433,24 @@
     listProfileMems
   */ 
   function loadProfile(name) {
+  
+    var memes = document.querySelector('#memes');
+    var explorePage = document.querySelector('#explore-page');
+    var profileContainer = document.querySelector("#profileContainer");
+    var templates = document.querySelector('#templates');
+    
+    
+    hideElement(memes);
+    hideElement(explorePage);
+    hideElement(templates);
+    showElement(profileContainer);
+
     
     var userId = name;
     if(name === ""){
       userId = document.querySelector("#welcome-msg").innerHTML.substring(9);
     }
     
-    hideElement(document.querySelector('#templates'));
     // request parameters
     var url = './create';
     var params = 'userId=' + userId;
@@ -438,8 +472,68 @@
 
   }
   
+  //load explore page
+  function showExplorePage(){
+    var memes = document.querySelector('#memes');
+    var explorePage = document.querySelector('#explore-page');
+    var profileContainer = document.querySelector("#profileContainer");
+    var templates = document.querySelector('#templates');
+    
+    
+    hideElement(memes);
+    showElement(explorePage);
+    hideElement(profileContainer);
+    hideElement(templates);
+    
+    explorePage.style.display = "flex";
+ }
+ 
+ function loadUsers(){
+    var userId = document.querySelector('#search').value;
+    var userResult = document.querySelector('#userResult');
+    userResult.innerHTML = "";
+    // request parameters
+    var url = './user';
+    var params = 'userId=' + userId;
+    var req = JSON.stringify({});
+
+    // display loading message
+    //showLoadingMessage('Loading users...');
+
+    // make AJAX call
+     ajax('GET', url + '?' + params, req, function(res) {
+       var items = JSON.parse(res);
+       if (!items) {
+         showWarningMessage('No such user.');
+       } else {
+         var list = document.querySelector("#userResult");
+         listUsers(list, items);
+       }
+     }, function() {
+       showErrorMessage('Cannot Users.');
+     });
+ }
+ 
+ function listUsers(list, items){
+    var ul = $create("ul", {id: "item-list"});
+ 
+    for(let i = 0; i < items.length; i++){
+        let item  = items[i];
+    	let listItem = $create("li", {className: "item"});
+    	var user = $create("img", {src: item.image_url});
+    	var userId = $create("h2");
+        userId.innerHTML = item.userId;   
+        listItem.onclick = function(){loadProfile(item.userId)};
+        listItem.appendChild(user);
+        listItem.appendChild(userId);
+        ul.appendChild(listItem);
+    }
+    
+    var userResult = document.querySelector("#userResult");
+    userResult.appendChild(ul);    
+ }
   /*
- Profile: {“author_id”: … , “numOfMemes” …, “numberOfFollwers”:… , “numberOfFollowing”: …, ”memes”:jsonarray}
+ Profile: {“author_id”: … , “numOfMemes” …, “numberOfFollwers”:… , “numberOfFollowing”: …, "followed": ...”, memes”:jsonarray}
   */
   function populateProfileHeader(data) { 
     var numFollowers = data.numOfFollowers;
@@ -453,7 +547,7 @@
     
     populateProfileImage(profile, data.profilePicture);
     populateProfileUserSettings(profile, data.author_id);
-    populateProfileStats(profile, numMemes, numFollowing, numFollowers);
+    populateProfileStats(profile,data.author_id, data.followed, numMemes, numFollowing, numFollowers);
     profileContainer.appendChild(profile);
   }
   
@@ -477,23 +571,35 @@
     profile.appendChild(profileUserSettings);
   }
   
-  function populateProfileStats(profile, numPosts, numFollowing, numFollowers) {
+  function populateProfileStats(profile, author_id, followed, numPosts, numFollowing, numFollowers) {
+    var userId = document.querySelector("#welcome-msg").innerHTML.substring(9);
     var profileStats = $create('div', {});
     profileStats.setAttribute("class", "profile-stats");
-    var posts = $create('li', {});
-    var followers = $create('li', {});
-    var following = $create('li', {});
-    posts.setAttribute("class", "profile-stat-count");
-    followers.setAttribute("class", "profile-stat-count");
-    following.setAttribute("class", "profile-stat-count");
+    var posts = $create('li', {className: "profile-stat-count"});
+    var followers = $create('li', {className: "profile-stat-count"});
+    var following = $create('li', {className: "profile-stat-count"});
+    
+     if (userId !== author_id){   
+    	var followButtonContainer = $create('li', {className: "profile-stat-count"});
+    	var followButton = $create('button', {id: "follow-btn"});
+    	followButton.dataset.author_id = author_id;
+    	followButton.dataset.followed = followed;
+    	followButton.className = followed? "unFollowButton" : "followButton";
+    	followButton.innerHTML = followed? "unFollow" : "Follow";	
+    	followButton.onclick = function(){followUser(author_id)};
+    	followButtonContainer.appendChild(followButton);
+        profileStats.appendChild(followButtonContainer);
+    }
     
     posts.textContent += "Posts " + numPosts;
     followers.textContent += "Followers " + numFollowers;
     following.textContent += "Following " + numFollowing;
     
+    
+    
     profileStats.appendChild(posts);
     profileStats.appendChild(followers);
-    profileStats.appendChild(following);    
+    profileStats.appendChild(following);
     profile.appendChild(profileStats);
   }
   
@@ -527,13 +633,16 @@
    * /recommendation?user_id=1111
    */
   function loadRecommendedItems() {
-    activeBtn('recommend-btn');
-    showElement(memes);
-    hideElement(profileContainer);
-    var templateSelection = document.querySelector("#templates");
-    hideElement(templateSelection);
+    var memes = document.querySelector('#memes');
+    var explorePage = document.querySelector('#explore-page');
+    var profileContainer = document.querySelector("#profileContainer");
+    var templates = document.querySelector('#templates');
     
-    console.log("Load Recommend Items");
+    
+    showElement(memes);
+    hideElement(explorePage);
+    hideElement(templates);
+    hideElement(profileContainer);
  
     // request parameters
     var url = './recommendation';
@@ -620,6 +729,32 @@
                     element.className = (followed? 'fa fa-user-plus ' :'fas fa-user-friends ') + author_id;
         
                   }
+         }
+       });
+     
+  }
+  
+   function followUser(author_id){
+      
+      var  button = document.querySelector("#follow-btn");
+      var  followed = button.dataset.followed == 'true';
+    
+        // request parameters
+    var url = './friendship';
+    var req = JSON.stringify({
+       to_user_id: author_id
+    });
+    
+    var method = (!followed) ? 'POST' : 'DELETE';
+
+    ajax(method, url, req,
+        // successful callback
+        function(res) {
+         var result = JSON.parse(res);
+         if (result.status === 'OK' || result.result === 'SUCCESS') {
+                    button.dataset.followed = !followed;
+                    button.className = (followed? 'followButton' :'unFollowButton') ;
+                    button.innerHTML = (followed? 'Follow' : 'unFollow');
          }
        });
      

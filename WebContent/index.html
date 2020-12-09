@@ -16,8 +16,7 @@
       <a href="#" id = "recommend-btn">Recommend</a>
       <a href="#" id="following-btn">Following</a>
       <a href="#" id = "create-btn">Create</a>
-      <input id="myInput" type="text" name="Search" placeholder="Search">
-  	  <input type="submit">
+      <a href="#" id = "explore-btn">Explore</a>
     </nav>
     <span id="welcome-msg"></span>
     <a id="logout-link" href="logout">Logout</a>
@@ -30,6 +29,18 @@
       <div id="memes">
         <small>Art &copy; <a href="//clairehummel.com">Claire Hummel</a></small>
 	    </div>
+	  <div id="explore-page" class = "searchForm">
+	  	<div class="searchForm">
+	  		<form>
+	  			<label>
+	  				<i class="fa fa-search"></i>
+	  			</label>
+	  			<input id="search" name="search" type="search">
+	  			<button id="search-btn">Search</button>
+	  		</form>
+	  	</div>
+	  	<div id="userResult" class="userResult"></div>
+	  </div>
       <div id="templates" class= "templateDisplay"> </div>
 
       <div id="login-form">

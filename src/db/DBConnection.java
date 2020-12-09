@@ -102,6 +102,8 @@ public interface DBConnection {
 	public boolean followedUser(String fromUserId, String toUserId);
 	
 	public boolean searchUser(String userId);
+	
+	public Set<String> getUsers(String userId);
 
 	public Set<String> searchFollowedUser(String fromUserId);
 	
