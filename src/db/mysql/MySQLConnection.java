@@ -635,13 +635,31 @@ public class MySQLConnection implements DBConnection {
 			return new HashSet<>();
 		}		
     	
-		Set<Meme> set = new HashSet<>(); 
+		Set<Meme> set = new HashSet<>();
+		
 		try {
 			
-			String sql = "SELECT * FROM Memes WHERE user_id != ? limit 10 ";
+			//get what friends like
+			String friendsLikeSql = "(SELECT m.* FROM Memes as m where m.id "
+					+ "IN (SELECT h.meme_id FROM History as h WHERE h.user_id "
+					+ "IN (SELECT ToUserId FROM Relationships where Relationships.FromUserId = ?)) "
+					+ "AND m.user_id != ?) ";
+			
+			//get what is popular
+			String popularSql = " (SELECT * from Memes WHERE Memes.id "
+					+ "IN (SELECT meme_id from History GROUP BY meme_id ORDER BY COUNT(meme_id)) "
+					+ "AND memes.user_id != ?) ";
+			
+			//get what is latest
+			String latestSql = " (SELECT * from Memes WHERE user_id != ? ORDER BY CreatedDateTime DESC LIMIT 10) ";
+			
+			String sql = friendsLikeSql + "UNION" + popularSql + "UNION" + latestSql + "ORDER BY CreatedDateTime DESC limit 10";
 			
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setString(1, userId);
+			statement.setString(2, userId);
+			statement.setString(3, userId);
+			statement.setString(4, userId);
 			ResultSet rs = statement.executeQuery();
 			
             while(rs.next()) {
@@ -656,7 +674,9 @@ public class MySQLConnection implements DBConnection {
             	set.add(builder.build());
             	
             }
+         
             return set;
+            
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
