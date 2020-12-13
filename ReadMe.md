@@ -1,4 +1,4 @@
-MemeExchange
+MemeExchange http://35.225.226.169/memeExchange
 
 This is a project that aims to provide a platform for users to create,  explore and share memes with other users.
 
@@ -21,3 +21,4 @@ This project is built using Java,
 To run this project locally, git clone the project, and install Docker and docker-compose.
 
 Then, run docker-compose, and visit localhost:80/memeExchange-0.0.1.
+
