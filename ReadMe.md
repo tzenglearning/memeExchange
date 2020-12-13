@@ -1,6 +1,5 @@
-MemeExchange http://35.225.226.169/memeExchange
-
-This is a project that aims to provide a platform for users to create,  explore and share memes with other users.
+MemeExchange, a social network for creating,  exploring and sharing memes.
+http://35.225.226.169/memeExchange
 
 This project is built using Java, 
 
@@ -8,7 +7,7 @@ This project is built using Java,
 
 •	Implemented a feed system, so that users could follow others and receive feeds of Menes.  
 
-•	Developed an interactive web page for clients to search other users Memes near their locations (HTML/CSS/JavaScript/AJAX)
+•	Developed an interactive web page for clients to create,  explore and share memes with other users
 
 •	Used Java servlets with RESTful APIs to handle HTTP requests and responses
 
