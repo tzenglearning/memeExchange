@@ -1,4 +1,5 @@
-MemeExchange, a social network for creating,  exploring and sharing memes.
+MemeExchange, a social network for creating, exploring and sharing memes.
+
 http://35.225.226.169/memeExchange
 
 This project is built using Java, 
