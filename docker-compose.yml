@@ -20,7 +20,7 @@ services:
         JDBC_USER: tzenglearning
         JDBC_PASS: 12345
       ports:
-        - "8080:8080"
+        - "80:8080"
       volumes:
         - ./target/memeExchange-0.0.1.war:/usr/local/tomcat/webapps/memeExchange-0.0.1.war
         - ./config/gcloud:/root/.config/gcloud

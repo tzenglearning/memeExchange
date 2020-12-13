@@ -648,7 +648,7 @@ public class MySQLConnection implements DBConnection {
 			//get what is popular
 			String popularSql = " (SELECT * from Memes WHERE Memes.id "
 					+ "IN (SELECT meme_id from History GROUP BY meme_id ORDER BY COUNT(meme_id)) "
-					+ "AND memes.user_id != ?) ";
+					+ "AND Memes.user_id != ?) ";
 			
 			//get what is latest
 			String latestSql = " (SELECT * from Memes WHERE user_id != ? ORDER BY CreatedDateTime DESC LIMIT 10) ";
